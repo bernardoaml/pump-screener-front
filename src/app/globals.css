@@ -3,8 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 87 40% 22%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    /* --primary: 263.4 70% 50.4%; */
+    --primary: 204 41% 53%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    /* --ring: 263.4 70% 50.4%; */
+    --ring: 224 41% 53%;
+    --radius: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,4 +44,290 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.notifications {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  margin-right: 1rem;
+  position: relative;
+  transform-origin: center center;
+  transition: 0.15s ease;
+  cursor: pointer;
+}
+.notifications:hover, .notifications:focus {
+  transform: rotate(10deg);
+}
+.notifications i {
+  font-size: 1.75rem;
+  color: #454545;
+}
+.notifications:after {
+  right: -8px;
+  top: 3px;
+  content: "2";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  background-color: red;
+  border-radius: 50%;
+  font-weight: 800;
+  border: 2px solid gray;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 8px 10px -4px rgba(0, 0, 0, 0.2);
+  transform-origin: center center;
+  transition: 0.15s ease;
+  cursor: pointer;
+}
+.avatar:hover, .avatar:focus {
+  transform: translatey(-4px);
+  box-shadow: 0 12px 14px -4px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+
+.navigation {
+  margin-top: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #9bbf2a20;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navigation-item {
+  font-size: 1.125rem;
+  display: inline-block;
+  padding: 0 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+}
+.navigation-item.active {
+  font-weight: 800;
+}
+.navigation-item.active:before {
+  background-color: #9bbf2a40;
+}
+.navigation-item:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 14px;
+  background-color: transparent;
+  z-index: -1;
+  bottom: -2px;
+  left: 0;
+  transition: 0.15s ease;
+}
+.navigation-item + .navigation-item {
+  margin-left: 1.25rem;
+}
+.navigation-item:hover:before, .navigation-item:focus {
+  background-color: #9bbf2a40;
+}
+
+
+
+
+/* Doodle CSS
+ * https://github.com/chr15m/DoodleCSS
+ */
+
+ .doodle * {
+  box-sizing: border-box;
+}
+
+.doodle {
+  /* background-color: #FDF7F1; */
+  color: #FDF7F1;
+}
+
+.doodle input, .doodle textarea, .doodle table, .doodle img {
+  max-width: 100%;
+}
+
+.doodle fieldset * {
+  max-width: calc(100vw - 100px);
+}
+
+.doodle table {
+  overflow: scroll;
+}
+
+.doodle a {
+  color: #FDF7F1;
+  font-weight: bold;
+}
+
+.doodle ul li {
+  list-style-type: "* ";
+}
+
+.doodle label {
+  padding: 0.25em 0px;
+  display: inline-block;
+}
+
+.doodle fieldset, .doodle textarea {
+  border-style: solid;
+  border-width: 10px 10px 10px 10px;
+  border-image: url(/doodle/border.svg) 10 10 10 10 stretch stretch;
+}
+
+.doodle .border, .doodle-border {
+  border-style: solid;
+  border-width: 10px 10px 10px 10px;
+  border-image: url(/doodle/button.svg) 10 10 10 10 stretch stretch;
+}
+
+.doodle button, .doodle input, .doodle select, .doodle input[type="file"]::file-selector-button {
+  border-style: solid;
+  border-width: 10px 10px 10px 10px;
+  border-image: url(/doodle/button.svg) 10 10 10 10 stretch stretch;
+}
+
+.doodle button {
+  text-align: center;
+}
+
+.doodle input[type="color"] {
+  min-height: 1.5em;    
+}
+
+.doodle hr {
+  border-style: solid;
+  border-width: 0px 3px 6px 3px;
+  border-image: url(/doodle/hr.svg) 0 3 6 3 stretch stretch;
+}
+
+.doodle blockquote {
+  border-left-style: solid;
+  border-width: 0px 6px 3px 6px;
+  border-image: url(/doodle/bq.svg) 0 6 3 6 stretch stretch;
+  padding-left: 0.5em;
+  border-right-width: 0px;
+}
+
+.doodle pre {
+  overflow: auto;
+}
+
+.doodle table {
+  border-collapse: collapse;
+  overflow: auto;
+  display: block;
+}
+
+.doodle table thead {
+  border-bottom: 3px solid #bbb;
+}
+
+.doodle table caption {
+  border-bottom-style: solid;
+  border-width: 0px 3px 6px 3px;
+  border-image: url(/doodle/hr.svg) 0 3 6 3 stretch stretch;
+}
+
+.doodle table td {
+  vertical-align: top;
+}
+
+.doodle img {
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 3px 3px 3px 3px;
+  border-image: url(/doodle/button.svg) 3 3 3 3 stretch stretch;
+}
+
+.doodle select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 1.5em;
+  background: url(/doodle/caret.svg) no-repeat right transparent;
+  background-position-x: calc(100% - 10px);
+}
+
+.doodle select[multiple] {
+  background: none;
+  padding: 0px;
+}
+
+.doodle button, .doodle textarea, .doodle input, .doodle select {
+  background-color: unset;
+  font-family: 'Short Stack', cursive;
+  font-size: 1em;
+  color: #FDF7F1;
+}
+
+.doodle input[type="checkbox"] {
+  border-width: 6px 6px 6px 6px;
+  border-image: url(/doodle/checkbox.svg) 6 6 6 6 stretch stretch;
+}
+
+.doodle input[type="radio"] {
+  border-width: 16px 16px 16px 16px;
+  border-image: url(/doodle/radio.svg) 16 16 16 16 stretch stretch;
+}
+
+.doodle input[type="checkbox"], .doodle input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: 0;
+  background: transparent;
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.doodle input[type="checkbox"]:after, .doodle input[type="radio"]:after {
+  font-size: 1.25em;
+  content: " ";
+  margin-bottom: -0.25em;
+}
+
+.doodle input[type="checkbox"]:disabled:after, .doodle input[type="radio"]:disabled:after {
+  content: "-";
+  color: #F3f3f3;
+}
+
+.doodle input[type="checkbox"]:checked:after, .doodle input[type="radio"]:checked:after {
+  content: "*";
+}
+
+.doodle input[type="file"]::file-selector-button {
+  font-family: inherit;
+  font-size: 0.8em;
+  font-size: 1em;
+  background-color: unset;
+  color: #FDF7F1;
 }
