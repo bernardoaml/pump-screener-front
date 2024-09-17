@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { fetchTrades } from '@/services/api';
 import TradeItem from './TradeItem';
+import axios from 'axios';
 
 const TradeSection: React.FC<{ tokenAddress: string }> = ({ tokenAddress }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -10,8 +11,12 @@ const TradeSection: React.FC<{ tokenAddress: string }> = ({ tokenAddress }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const tradesData = await fetchTrades(tokenAddress, limit, offset);
-      setTrades(Array.isArray(tradesData) ? tradesData : []);
+      // const tradesData = await fetchTrades(tokenAddress, limit, offset);
+      // setTrades(Array.isArray(tradesData) ? tradesData : []);
+      const tradesData = await axios.get("/api/trades", {
+        params:{tokenAddress,}
+      })
+      setTrades(tradesData.data)
     };
 
     fetchData();
