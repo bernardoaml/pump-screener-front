@@ -29,12 +29,6 @@ const KothTimestamp = () => {
         }))
         setKothTokens(tokenData)
       }).catch(error => console.error('Request Error', error))
-      // http://localhost:3001/king_of_the_hill
-      // const data = await response.json();
-      // setKothTokens(data);
-    // };
-
-    // fetchTokens();
   }, []);
 
   return (
