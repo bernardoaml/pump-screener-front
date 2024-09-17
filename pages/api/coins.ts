@@ -2,19 +2,22 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-  const tokenAddress = req.url?.split("tokenAddress=")[1];
+  if (!req.url) {
+    res.status(500).json({ error: "Requested URL Not Found" });
+    return;
+  }
+  const tokenAddress = new URL(`http://c${req.url}`).searchParams.get("tokenAddress");
   if (!tokenAddress) {
-    res.status(500).json({ error: "Token Address not found in requested URL" });
+    res.status(500).json({ error: "tokenAddress not found in URL" });
     return;
   }
   try {
     const response = await axios.get(`https://frontend-api.pump.fun/coins/${tokenAddress}`);
     res.status(200).json(response.data);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch Token Data' });
+    res.status(500).json({ error: 'Failed to fetch coins data' });
   }
 }
-  

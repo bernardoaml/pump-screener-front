@@ -4,25 +4,26 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
+import TokenPage from '@/app/[slug]/page';
 
 interface Token {
   image_uri?: string;
   name: string;
   symbol: string;
-  address: string;
+  mint: string;
 }
 
 const RecentTokens = () => {
   const [recentTokens, setRecentTokens] = useState<Token[]>([]);
 
   useEffect(() => {
-    axios.get('/api/recent_tokens')
+    axios.get<Token[]>('/api/recent_tokens')
       .then(response => {
-        const tokenData = response.data.map((token: any) => ({
+        const tokenData = response.data.map((token) => ({
           image_uri: token.image_uri,
           name: token.name,
           symbol: token.symbol,
-          address: token.address
+          mint: token.mint
         }))
         setRecentTokens(tokenData);
       })
@@ -35,10 +36,10 @@ const RecentTokens = () => {
       <Splide
         options={{ perPage: 6, gap: 26, navigator: false, pagination: false }}
         aria-label="Recent Tokens"
-        className="hidden lg:flex"
+        className="lg:flex"
       >
         {recentTokens.map(token => (
-          <SplideSlide key={token.address}>
+          <SplideSlide key={token.mint}>
             <div className="flex flex-col items-center">
               <img
                 src={token.image_uri}
@@ -46,7 +47,7 @@ const RecentTokens = () => {
                 className="h-48 w-48 object-contain"
               />
               <h2 className="text-maincolor mt-2 font-poppins text-lg">{token.name}</h2>
-              <p className="text-blackcolor text-sm">{token.symbol}</p>
+              <p className="text-whitecolor text-sm">{token.symbol}</p>
             </div>
           </SplideSlide>
         ))}

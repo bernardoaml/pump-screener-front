@@ -2,12 +2,16 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-  const userId = req.url?.split("userId=")[1];
+  if (!req.url) {
+    res.status(500).json({ error: "Requested URL Not Found" });
+    return;
+  }
+  const userId = new URL(`http://c${req.url}`).searchParams.get("userId");
   if (!userId) {
-    res.status(500).json({ error: "Token Address not found in requested URL" });
+    res.status(500).json({ error: "userId not found in URL" });
     return;
   }
   try {
@@ -17,4 +21,3 @@ export default async function handler(
     res.status(500).json({ error: 'Failed to fetch Token Data' });
   }
 }
-  

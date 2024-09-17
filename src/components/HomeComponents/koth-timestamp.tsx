@@ -19,16 +19,17 @@ interface Token {
 const KothTimestamp = () => {
   const [kothTokens, setKothTokens] = useState<Token[]>([]);
   useEffect(() => {
-    // const fetchTokens = async () => {
-      const response = axios.get('/api/last_koth')
-      .then(response=>{
-        const tokenData = response.data.map((token: any)=>({
-          logo : token.logo,
-          name: token.name,
-          symbol: token.symbol
-        }))
-        setKothTokens(tokenData)
-      }).catch(error => console.error('Request Error', error))
+      axios.get<Token[]>('/api/last_koth')
+        .then(response=>{
+          const tokenData = response.data.map((token)=>({
+            logo : token.logo,
+            name: token.name,
+            symbol: token.symbol,
+            address: token.address
+          }))
+          setKothTokens(tokenData)
+        })
+        .catch(error => console.error('Request Error', error));
   }, []);
 
   return (
@@ -39,7 +40,7 @@ const KothTimestamp = () => {
         <Splide
           options={{ perPage: 6, gap: 26, navigator: false, pagination: false }}
           aria-label="King of The Hill"
-          className="hidden lg:flex"
+          className="lg:flex"
           data-aos="zoom-in-up"
           data-aos-delay="100"
           data-aos-duration="1500"

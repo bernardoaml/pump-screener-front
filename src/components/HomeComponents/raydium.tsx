@@ -19,16 +19,18 @@ interface Token {
 const MoreCloseToRaydium = () => {
   const [raydiumTokens, setRaydiumTokens] = useState<Token[]>([]);
   useEffect(() => {
-      const response = axios.get('/api/usd_market_cap')
-      .then(response=>{
-        const tokenData = response.data.map((token: any)=>({
+    axios.get<Token[]>('/api/usd_market_cap')
+      .then(response => {
+        const tokenData = response.data.map((token)=>({
           logo : token.logo,
           name: token.name,
-          symbol: token.symbol
+          symbol: token.symbol,
+          address: token.address,
         }))
         setRaydiumTokens(tokenData)
-      }).catch(error => console.error('Request Error', error)) 
-    }, []);
+      })
+      .catch(error => console.error('Request Error', error));
+  }, []);
   
   
   
@@ -43,7 +45,7 @@ const MoreCloseToRaydium = () => {
           <Splide
             options={{ perPage: 6, gap: 26, navigator: false, pagination: false }}
             aria-label="King of The Hill"
-            className="hidden lg:flex"
+            className="lg:flex"
             data-aos="zoom-in-up"
             data-aos-delay="100"
             data-aos-duration="1500"

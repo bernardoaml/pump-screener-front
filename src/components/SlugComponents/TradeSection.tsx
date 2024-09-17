@@ -1,22 +1,19 @@
 // src/components/TradeSection.tsx
 import { useEffect, useState } from 'react';
-import { fetchTrades } from '@/services/api';
 import TradeItem from './TradeItem';
 import axios from 'axios';
 
 const TradeSection: React.FC<{ tokenAddress: string }> = ({ tokenAddress }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [offset, setOffset] = useState(0);
-  const limit = 200;
+  const limit = 100;
 
   useEffect(() => {
     const fetchData = async () => {
-      // const tradesData = await fetchTrades(tokenAddress, limit, offset);
-      // setTrades(Array.isArray(tradesData) ? tradesData : []);
       const tradesData = await axios.get("/api/trades", {
-        params:{tokenAddress,}
+        params: { tokenAddress, offset, limit }
       })
-      setTrades(tradesData.data)
+      setTrades(tradesData.data);
     };
 
     fetchData();

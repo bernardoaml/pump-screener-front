@@ -1,10 +1,9 @@
 // src/app/[slug]/page.tsx
 "use client";
 import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { getData } from '@/services/api';
+import axios, { AxiosError } from 'axios';
 import ThreadTradesSection from '@/components/SlugComponents/ThreadsTradeSection';
-import LightweightChart from '@/components/SlugComponents/LightWeightChart';
+
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -14,21 +13,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
   useEffect(() => {
     async function fetchToken() {
-      // try {
-      //   const tokenData = await getData(params.slug);
-      //   setToken(tokenData);
-      // } catch (error: any) {
-      //   setError(error.message);
-      // }
       try {
-        const response = await axios.get("/api/coins", {
-          params: {
-            tokenAddress: params.slug
-          }
+        const response = await axios.get(`/api/coins`, {
+          params: { tokenAddress: params.slug }
         });
         setToken(response.data)
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof AxiosError || err instanceof Error) {
+          setError(err.message);
+        } else {
+          console.error(err);
+          setError("Unexpected error");
+        }
       }
     }
 
