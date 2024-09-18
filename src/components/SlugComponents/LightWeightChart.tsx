@@ -16,8 +16,6 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
     async function initChart() {
       if (chartContainerRef.current && chartContainerRef.current.children.length === 0) {
         const chart = createChart(chartContainerRef.current, {
-          width: chartContainerRef.current.clientWidth,
-          height: chartContainerRef.current.clientHeight,
           layout: {
             background: { color: '#1e1e1e' },
             textColor: '#d1d4dc',
@@ -33,8 +31,11 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
           crosshair: {
             mode: 0,
           },
+
           timeScale: {
             borderColor: '#485c7b',
+            timeVisible: true,
+            secondsVisible: true
           },
         });
 
@@ -45,19 +46,25 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
           borderUpColor: '#4caf50',
           wickDownColor: '#f44336',
           wickUpColor: '#4caf50',
-        });
-
-        const volumeSeries = chart.addHistogramSeries({
-          color: '#26a69a',
           priceFormat: {
-            type: 'volume',
+            type: "price",
+            precision: 10,
+            minMove: 0.000000001,
           },
         });
+        
 
         const data = await fetchTokenData(tokenMint);
-        candlestickSeries.setData(data);
-        volumeSeries.setData(data.map((item: { time: number, value: number, close: number, open: number }) => ({ time: item.time, value: item.value, color: item.close > item.open ? '#4caf50' : '#f44336' })));
-
+        candlestickSeries.setData(data); 
+        chart.timeScale().applyOptions({
+          barSpacing: 0,
+        });
+        chart.timeScale().fitContent();       
+        window.addEventListener("resize", () => {
+          if (chart && chartContainerRef.current) {
+            chart.resize(chartContainerRef.current.clientWidth, chartContainerRef.current.clientHeight);
+          }
+        });
         return () => {
           chart.remove();
         };
@@ -67,7 +74,7 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
     initChart();
   }, [tokenMint]);
 
-  return <div ref={chartContainerRef} style={{ width: '100%', height: '200px' }} />;
+  return <div ref={chartContainerRef} className='bg-gray-500 w-full h-96 mb-4' />;
 };
 
 export default LightweightChart;

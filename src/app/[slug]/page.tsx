@@ -63,9 +63,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               [scroll down]
             </span>
           </div>
-          <div className="bg-gray-500 max-h-96 mb-4">
-            <LightweightChart tokenMint={token.mint} />
-          </div>
+          <LightweightChart tokenMint={token.mint} />
           <div className="col-span-1 flex flex-col items-center">
           <img src={token.image_uri} alt={token.name} className="w-full h-auto mb-4" />
           <h1 className="text-xl font-semibold">{token.name} ({token.symbol})</h1>
