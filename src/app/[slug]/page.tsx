@@ -63,10 +63,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               [scroll down]
             </span>
           </div>
-          <div className="bg-gray-500 h-96 mb-4">
+          <div className="bg-gray-500 max-h-96 mb-4">
             <LightweightChart tokenMint={token.mint} />
           </div>
+          <div className="col-span-1 flex flex-col items-center">
+          <img src={token.image_uri} alt={token.name} className="w-full h-auto mb-4" />
+          <h1 className="text-xl font-semibold">{token.name} ({token.symbol})</h1>
+          <p className="text-sm">{token.description}</p>
+          <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+            Visit Website
+          </a>
           <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} />
+        </div>
           <div ref={bottomRef} className="mt-4 flex">
             <span
               className="text-sm bg-transparent text-white mt-2 cursor-pointer"
@@ -75,14 +83,6 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               [scroll up]
             </span>
           </div>
-        </div>
-        <div className="col-span-1 flex flex-col items-center">
-          <img src={token.image_uri} alt={token.name} className="w-full h-auto mb-4" />
-          <h1 className="text-xl font-semibold">{token.name} ({token.symbol})</h1>
-          <p className="text-sm">{token.description}</p>
-          <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-            Visit Website
-          </a>
         </div>
       </div>
     </div>
