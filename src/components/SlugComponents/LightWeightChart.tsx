@@ -14,7 +14,7 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
 
   useEffect(() => {
     async function initChart() {
-      if (chartContainerRef.current) {
+      if (chartContainerRef.current && chartContainerRef.current.children.length === 0) {
         const chart = createChart(chartContainerRef.current, {
           width: chartContainerRef.current.clientWidth,
           height: chartContainerRef.current.clientHeight,
