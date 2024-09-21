@@ -4,4 +4,6 @@ interface Comment {
     timestamp: string;
     text: string;
     file_uri: string | null;
+    username: string;
+    profile_image: string | null;
   }
