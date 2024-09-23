@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import TokenPage from '@/app/[slug]/page';
 
 interface Token {
   image_uri?: string;
@@ -41,11 +40,13 @@ const RecentTokens = () => {
         {recentTokens.map(token => (
           <SplideSlide key={token.mint}>
             <div className="flex flex-col items-center">
-              <img
-                src={token.image_uri}
-                alt={token.name}
-                className="h-48 w-48 object-contain"
-              />
+              <a href={`/${token.mint}`}>
+                <img
+                  src={token.image_uri}
+                  alt={token.name}
+                  className="h-48 w-48 object-contain"
+                />
+              </a>
               <h2 className="text-maincolor mt-2 font-poppins text-lg">{token.name}</h2>
               <p className="text-whitecolor text-sm">{token.symbol}</p>
             </div>

@@ -13,9 +13,6 @@ interface Token {
   address:string;
 }
 
-
-
-
 const MoreCloseToRaydium = () => {
   const [raydiumTokens, setRaydiumTokens] = useState<Token[]>([]);
   useEffect(() => {
@@ -31,12 +28,7 @@ const MoreCloseToRaydium = () => {
       })
       .catch(error => console.error('Request Error', error));
   }, []);
-  
-  
-  
-  
-  
-  
+
     return (
       <>
         <div className="mx-auto mt-8 max-w-7xl">
@@ -53,11 +45,13 @@ const MoreCloseToRaydium = () => {
             {raydiumTokens.map(token => (
               <SplideSlide key={token.address}>
                 <div className="flex flex-col">
-                  <img
-                    src={token.logo}
-                    alt={token.name}
-                    className="max-h-48 max-w-48"
-                  />
+                  <a href={`/${token.address}`}>
+                    <img
+                      src={token.logo}
+                      alt={token.name}
+                      className="max-h-48 max-w-48"
+                    />
+                  </a>
                   <h2 className="text-maincolor mt-2 font-poppins text-lg">
                     {token.name}
                   </h2>

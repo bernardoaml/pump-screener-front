@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { timeAgo } from '@/services/utils';
 import defaultProfileImage from '../../../public/tokens/noProfileImage.png'
 
-const CommentItem: React.FC<{ comment: Comment; userProfile: UserProfile; isCreator: boolean }> = ({ comment, userProfile, isCreator }) => {
+const CommentItem: React.FC<{ comment: Comment; isCreator: boolean }> = ({ comment, isCreator }) => {
   const [isImageFullSize, setIsImageFullSize] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
 
@@ -14,8 +13,8 @@ const CommentItem: React.FC<{ comment: Comment; userProfile: UserProfile; isCrea
     setIsTextExpanded(!isTextExpanded);
   };
 
-  const profileImage = userProfile?.profile_image || defaultProfileImage.src;
-  const username = userProfile?.username ? userProfile.username : comment.user.slice(0, 6);
+  const profileImage = comment.profile_image || defaultProfileImage.src;
+  const username = comment.username ? comment.username : comment.user.slice(0, 6);
   const formatDate = (timestamp: string): string => {
     const date = new Date(timestamp);
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
