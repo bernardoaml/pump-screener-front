@@ -1,15 +1,10 @@
 import './globals.css';
-
-import { fontLexend, fontMontserrat, fontPoppins, fontShortStack } from '@/configs/fonts.configs';
-
+import { fontLexend, fontMontserrat, fontShortStack } from '@/configs/fonts.configs';
 import { cn } from '@/lib/utils';
-
-import {NavTop} from '@/page/nav-top';
+import { NavTop } from '@/page/nav-top';
 import { Footer } from '@/page/footer';
-import {Providers} from '@/providers';
-
+import { Providers } from '@/components/providers';
 import { rootMetadata } from '@/constants/metadata/public';
-
 
 export const metadata = rootMetadata;
 
@@ -32,7 +27,6 @@ export default function RootLayout({
           fontMontserrat.variable,
           fontLexend.variable,
           fontShortStack.variable,
-        
         )}
       >
         <NavTop />
