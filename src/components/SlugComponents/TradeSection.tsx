@@ -3,16 +3,14 @@ import { useEffect, useState } from 'react';
 import TradeItem from './TradeItem';
 import axios from 'axios';
 
-const TradeSection: React.FC<{ tokenAddress: string }> = ({ tokenAddress }) => {
+const TradeSection: React.FC<{ tokenAddress: string, creator: string }> = ({ tokenAddress, creator }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [offset, setOffset] = useState(0);
   const limit = 100;
 
   useEffect(() => {
     const fetchData = async () => {
-      const tradesData = await axios.get("/api/trades", {
-        params: { tokenAddress, offset, limit }
-      })
+      const tradesData = await axios.get(`/api/trades/all/${tokenAddress}?limit=${limit}&offset=${offset}&minimumSize=0`);
       setTrades(tradesData.data);
     };
 
@@ -39,8 +37,8 @@ const TradeSection: React.FC<{ tokenAddress: string }> = ({ tokenAddress }) => {
         <div>Date</div>
         <div>Transaction</div>
       </div>
-      {trades.map(trade => (
-        <TradeItem key={trade.signature} trade={trade} />
+      {trades.map((trade, index) => (
+        <TradeItem key={trade.signature + String(index)} trade={trade} creator={creator} />
       ))}
       <div className="pagination-controls flex justify-between mt-4">
         <button onClick={handlePreviousPage} disabled={offset === 0} className="bg-gray-500 text-white px-4 py-2 rounded">

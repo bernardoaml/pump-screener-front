@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import ThreadTradesSection from '@/components/SlugComponents/ThreadsTradeSection';
 import LightweightChart from '@/components/SlugComponents/LightWeightChart';
+import unprotectLinkOfCFIPFS from '@/utils/unprotectLinkOfCFIPFS';
 
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
@@ -17,6 +18,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
         const response = await axios.get(`/api/coins`, {
           params: { tokenAddress: params.slug }
         });
+        response.data.image_uri = unprotectLinkOfCFIPFS(response.data.image_uri);
         setToken(response.data);
       } catch (err) {
         if (err instanceof AxiosError || err instanceof Error) {
@@ -56,12 +58,13 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       <div className="grid grid-cols-2 gap-6 w-full">
         {/* Coluna do Gráfico */}
         <div className="col-span-1 order-1">
+
+          <LightweightChart tokenMint={token.mint} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
               [scroll down]
             </span>
           </div>
-          <LightweightChart tokenMint={token.mint} />
         </div>
 
         {/* Coluna da Imagem e Informações */}

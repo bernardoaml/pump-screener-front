@@ -28,7 +28,7 @@ const ThreadTradesSection: React.FC<{ tokenAddress: string, creator: string }> =
         </div>
       ) : (
         <div className="bg-black p-4 rounded-lg">
-          <TradeSection tokenAddress={tokenAddress} />
+          <TradeSection tokenAddress={tokenAddress} creator={creator} />
         </div>
       )}
     </div>
