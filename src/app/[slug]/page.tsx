@@ -47,7 +47,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
   if (!token) {
     return (
-      <div className="relative flex max-w-7xl flex-col place-items-center justify-center">
+      <div className="relative flex max-w-7xl mx-auto flex-col place-items-center justify-center">
         Loading...
       </div>
     );
@@ -55,9 +55,9 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
   return (
     <div className="relative flex flex-col items-center justify-center max-w-7xl mx-auto pt-10">
-      <div className="grid grid-cols-2 gap-6 w-full">
+      <div className="flex w-full justify-center gap-10">
         {/* Coluna do Gráfico */}
-        <div className="col-span-1 order-1">
+        <div className="basis-[55%]">
 
           <LightweightChart tokenMint={token.mint} />
           <div ref={topRef} className="mb-4 flex justify-start">
