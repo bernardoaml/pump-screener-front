@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import defaultProfileImage from '../../../public/tokens/noProfileImage.png'
+import unprotectLinkOfCFIPFS from '@/utils/unprotectLinkOfCFIPFS';
 
 const CommentItem: React.FC<{ comment: Comment; isCreator: boolean }> = ({ comment, isCreator }) => {
   const [isImageFullSize, setIsImageFullSize] = useState(false);
@@ -32,7 +33,7 @@ const CommentItem: React.FC<{ comment: Comment; isCreator: boolean }> = ({ comme
       <div className="comment-content flex items-start">
         {comment.file_uri && (
           <img
-            src={comment.file_uri}
+            src={unprotectLinkOfCFIPFS(comment.file_uri)}
             alt="Comment Image"
             className={`comment-image cursor-pointer mr-2 ${isImageFullSize ? 'max-w-full' : 'w-40 h-40'}`} // Altera o tamanho da imagem do comentário
             onClick={handleImageClick}
