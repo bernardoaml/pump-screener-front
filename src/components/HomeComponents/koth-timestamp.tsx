@@ -4,6 +4,7 @@ import { useEffect,useState } from 'react';
 import axios from 'axios';
 import {Splide, SplideSlide} from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
+import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
 
 interface Token {
   image_uri?: string;
@@ -11,6 +12,9 @@ interface Token {
   name: string;
   symbol: string;
   address:string;
+  website?:string;
+  twitter?:string;
+  telegram?:string;
 }
 
 const KothTimestamp = () => {
@@ -43,18 +47,37 @@ const KothTimestamp = () => {
         >
           {kothTokens.map(token => (
             <SplideSlide key={token.address}>
-              <div className="flex flex-col">
+              <div className="flex flex-col items-center">
                 <a href={`/${token.address}`}>
                   <img
                     src={token.logo}
                     alt={token.name}
-                    className="max-h-48 max-w-48"
+                    className="max-h-48 max-w-48 object-contain"
                   />
                 </a>
                 <h2 className="text-maincolor mt-2 font-poppins text-lg">
                   {token.name}
                 </h2>
                 <p className="text-blackcolor text-sm">{token.symbol}</p>
+  
+                {/* Adicionando os ícones */}
+                <div className="flex mt-2 space-x-4">
+                  {token.website && (
+                    <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                      <FaGlobe className="h-5 w-5" />
+                    </a>
+                  )}
+                  {token.twitter && (
+                    <a href={token.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                      <FaTwitter className="h-5 w-5" />
+                    </a>
+                  )}
+                  {token.telegram && (
+                    <a href={token.telegram} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                      <FaTelegramPlane className="h-5 w-5" />
+                    </a>
+                  )}
+                </div>
               </div>
             </SplideSlide>
           ))}
