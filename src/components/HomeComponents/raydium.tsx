@@ -9,6 +9,7 @@ import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
 interface Token {
   image_uri?: string;
   logo?: string;
+  mint:string;
   name: string;
   symbol: string;
   address:string;
@@ -27,6 +28,7 @@ const MoreCloseToRaydium = () => {
           name: token.name,
           symbol: token.symbol,
           address: token.address,
+          mint:token.mint
         }))
         setRaydiumTokens(tokenData)
       })
@@ -79,6 +81,15 @@ return (
                     <FaTelegramPlane className="h-5 w-5" />
                   </a>
                 )}
+                {/* Alterar ícone para Pump.fun */}
+                <a
+                  href={`https://pump.fun/${token.mint}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500"
+                >
+                  <FaGlobe className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </SplideSlide>

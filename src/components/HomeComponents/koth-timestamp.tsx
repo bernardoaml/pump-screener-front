@@ -7,6 +7,7 @@ import '@splidejs/react-splide/css';
 import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
 
 interface Token {
+  mint:string;
   image_uri?: string;
   logo?: string;
   name: string;
@@ -26,7 +27,8 @@ const KothTimestamp = () => {
             logo : token.logo,
             name: token.name,
             symbol: token.symbol,
-            address: token.address
+            address: token.address,
+            mint:token.mint
           }))
           setKothTokens(tokenData)
         })
@@ -77,6 +79,15 @@ const KothTimestamp = () => {
                       <FaTelegramPlane className="h-5 w-5" />
                     </a>
                   )}
+                  {/* Alterar ícone para Pump.fun */}
+                 <a
+                  href={`https://pump.fun/${token.mint}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500"
+                >
+                  <FaGlobe className="h-5 w-5" />
+                </a>
                 </div>
               </div>
             </SplideSlide>

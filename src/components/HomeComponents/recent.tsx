@@ -74,6 +74,16 @@ const RecentTokens = () => {
                     <FaTelegramPlane className="h-5 w-5" />
                   </a>
                 )}
+  
+                {/* Alterar ícone para Pump.fun */}
+                <a
+                  href={`https://pump.fun/${token.mint}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500"
+                >
+                  <FaGlobe className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </SplideSlide>

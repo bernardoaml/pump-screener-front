@@ -49,7 +49,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   if (!token) {
     return (
       <div className="relative flex max-w-7xl mx-auto flex-col place-items-center justify-center">
-        Loading...
+        Loading Content...
       </div>
     );
   }
@@ -59,7 +59,6 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       <div className="flex w-full justify-center gap-10 ">
         {/* Coluna do Gráfico */}
         <div className="w-full ">
-
           <LightweightChart tokenMint={token.mint} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
@@ -67,31 +66,41 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
             </span>
           </div>
         </div>
-
+  
         {/* Coluna da Imagem e Informações */}
         <div className="col-span-1 order-2 flex flex-col items-center">
-        <img src={token.image_uri} alt={token.name} className="w-64 h-auto mb-4 border-8 border-black" />
-        <h1 className="text-xl font-semibold text-center">{token.name} ({token.symbol})</h1>
-        <p className="text-sm text-center">{token.description}</p>
-
-        {token.website && (
-          <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
-            <FaGlobe className="mr-2" /> Visit Website
+          <img src={token.image_uri} alt={token.name} className="w-64 h-auto mb-4 border-8 border-black" />
+          <h1 className="text-xl font-semibold text-center">{token.name} ({token.symbol})</h1>
+          <p className="text-sm text-center">{token.description}</p>
+  
+          {/* Link para Pump.fun */}
+          <a
+            href={`https://pump.fun/${token.mint}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline mt-2 flex items-center"
+          >
+            Visit on Pump.fun
           </a>
-        )}
-
-        {token.twitter && (
-          <a href={token.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
-            <FaTwitter className="mr-2" /> Visit Twitter
-          </a>
-        )}
-
-        {token.telegram && (
-          <a href={token.telegram} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
-            <FaTelegramPlane className="mr-2" /> Visit Telegram
-          </a>
-        )}
-    </div>
+  
+          {token.website && (
+            <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
+              <FaGlobe className="mr-2" /> Visit Website
+            </a>
+          )}
+  
+          {token.twitter && (
+            <a href={token.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
+              <FaTwitter className="mr-2" /> Visit Twitter
+            </a>
+          )}
+  
+          {token.telegram && (
+            <a href={token.telegram} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 flex items-center">
+              <FaTelegramPlane className="mr-2" /> Visit Telegram
+            </a>
+          )}
+        </div>
       </div>
       <div className="flex w-full justify-center items-center mt-4">
         <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} />
