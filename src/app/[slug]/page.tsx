@@ -56,9 +56,9 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
   return (
     <div className="relative flex flex-col items-center justify-center max-w-7xl mx-auto pt-10">
-      <div className="flex w-full justify-center gap-10">
+      <div className="flex w-full justify-center gap-10 ">
         {/* Coluna do Gráfico */}
-        <div className="basis-[55%]">
+        <div className="w-full ">
 
           <LightweightChart tokenMint={token.mint} />
           <div ref={topRef} className="mb-4 flex justify-start">
