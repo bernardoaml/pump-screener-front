@@ -2,7 +2,6 @@ import Cors from 'cors';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-// Inicializando o middleware CORS
 const cors = Cors({
   methods: ['GET', 'HEAD'],
 });
@@ -19,7 +18,7 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await runMiddleware(req, res, cors);  // Adicionando o middleware CORS
+  await runMiddleware(req, res, cors); 
 
   try {
     const response = await axios.get('https://frontend-api.pump.fun/coins', {
