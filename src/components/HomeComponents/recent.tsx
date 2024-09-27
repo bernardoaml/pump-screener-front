@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
+import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa"; 
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
+import './splide-customization.css'
 
 interface Token {
   image_uri?: string;
@@ -63,7 +64,7 @@ const RecentTokens = () => {
                 <img
                   src={token.image_uri}
                   alt={token.name}
-                  className="flex h-34 w-34 w-full rounded-sm"
+                  className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
                 />
               </a>
               <h2 className="text-maincolor mt-3 line-clamp-1 text-base">

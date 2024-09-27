@@ -1,0 +1,21 @@
+.splide__arrow--prev {
+    left: -2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+  .splide__arrow--next {
+    right: -2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+  .splide__arrow {
+    transition: transform 0.3s ease;
+    /* transition: box-shadow 0.3 ease; */
+  }
+  
+    .splide__arrow:hover {
+        transform: scale(1.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
