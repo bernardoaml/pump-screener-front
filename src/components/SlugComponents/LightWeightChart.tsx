@@ -21,8 +21,8 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
     if (chartContainerRef.current && chartContainerRef.current.children.length === 0) {
       const chart = createChart(chartContainerRef.current, {
         layout: {
-          background: { color: '#1e1e1e' },
-          textColor: '#d1d4dc',
+          background: { color: '#020d12' },
+          textColor: '#99f5dc',
         },
         grid: {
           vertLines: {
@@ -88,7 +88,7 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
     }
   }, [data, chartState])
 
-  return <div ref={chartContainerRef} className='bg-gray-500 w-full max-w-[900px] h-96 mb-4 m-auto' />
+  return <div ref={chartContainerRef} className='bg-gray-500 w-full max-w-[1600px] h-96 mb-4 m-auto' />
 };
 
 export default LightweightChart;

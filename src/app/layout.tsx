@@ -1,8 +1,8 @@
 import './globals.css';
 import { fontLexend, fontMontserrat, fontShortStack, fontCatamaran } from '@/configs/fonts.configs';
 import { cn } from '@/lib/utils';
-import { NavTop } from '@/page/nav-top';
-import { Footer } from '@/page/footer';
+import { NavTop } from '@/components/page/nav-top';
+import { Footer } from '@/components/page/footer';
 import { Providers } from '@/components/providers';
 import { rootMetadata } from '@/constants/metadata/public';
 

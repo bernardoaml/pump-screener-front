@@ -28,8 +28,8 @@ const TradeSection: React.FC<{ tokenAddress: string, creator: string }> = ({ tok
   };
 
   return (
-    <div>
-      <div className="trade-header grid grid-cols-6 gap-4 mb-2 font-bold">
+    <div className='p-4'>
+      <div className="trade-header grid grid-cols-6 gap-4 mb-2 font-medium text-primary font-xl">
         <div>User</div>
         <div>Type</div>
         <div>SOL</div>

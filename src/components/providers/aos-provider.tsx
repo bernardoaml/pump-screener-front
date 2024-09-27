@@ -7,6 +7,6 @@ type Props = {
 };
 
 export const AosProvider = ({children}: Props) => {
-  const AosInit = dynamic(() => import('../../page/aos-init'), {ssr: true});
+  const AosInit = dynamic(() => import('../page/aos-init'), {ssr: true});
   return <AosInit>{children}</AosInit>;
 };

@@ -22,7 +22,7 @@ const CommentItem: React.FC<{ comment: Comment; isCreator: boolean }> = ({ comme
   };
 
   return (
-    <div key={comment.id} className={`comment mb-4 p-2 border rounded max-w-full ${isCreator ? 'border-blue-500' : ''}`}>
+    <div key={comment.id} className={`comment mb-4 p-4 border rounded max-w-full bg-gradient-to-r from-[#01080b] to-transparent ${isCreator ? 'border-primary' : ''}`}>
       <div className="comment-header flex items-center mb-2">
         <img src={profileImage} alt="Profile" className="profile-image w-6 h-6 rounded-full mr-2" /> {/* Altera o tamanho da imagem do perfil do usuário */}
         <span className="username font-semibold">

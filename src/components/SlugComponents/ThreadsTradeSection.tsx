@@ -7,27 +7,27 @@ const ThreadTradesSection: React.FC<{ tokenAddress: string, creator: string }> =
   const [activeTab, setActiveTab] = useState<'thread' | 'trades'>('thread');
 
   return (
-    <div className="p-4 rounded-lg shadow">
+    <div className="py-4 rounded-lg shadow w-full">
       <div className="flex justify-between mb-4">
         <button
-          className={`px-4 py-2 rounded z-10 ${activeTab === 'thread' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          className={`px-4 py-2 rounded z-10 ${activeTab === 'thread' ? 'bg-primary text-secondary font-medium' : 'bg-secondary'}`}
           onClick={() => setActiveTab('thread')}
         >
           Thread
         </button>
         <button
-          className={`px-4 py-2 rounded z-10 ${activeTab === 'trades' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          className={`px-4 py-2 rounded z-10 ${activeTab === 'trades' ? 'bg-primary text-secondary font-medium' : 'bg-secondary'}`}
           onClick={() => setActiveTab('trades')}
         >
           Trades
         </button>
       </div>
       {activeTab === 'thread' ? (
-        <div className="bg-blue-500 p-4 rounded-lg">
+        <div className="rounded-lg">
           <CommentSection tokenAddress={tokenAddress} creator={creator} />
         </div>
       ) : (
-        <div className="bg-black p-4 rounded-lg">
+        <div className="bg-black bg-opacity-40 p-4 rounded-lg">
           <TradeSection tokenAddress={tokenAddress} creator={creator} />
         </div>
       )}
