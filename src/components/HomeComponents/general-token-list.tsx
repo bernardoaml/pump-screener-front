@@ -17,12 +17,14 @@ interface Token {
     twitter?:string;
     telegram?:string;
   }
-
-const GeneralTokens = ()=>{
+  const GeneralTokens = ()=>{
     const [generalTokens, setGeneralTokens] = useState<Token[]>([]);
+    const [currentPage, setCurrentPage] = useState(0)
 
     useEffect(()=>{
-        axios.get<Token[]>('/api/recent_tokens')
+      const tokensPerPage = 49;
+      const offset = currentPage * tokensPerPage;
+        axios.get<Token[]>(`/api/recent_tokens?limit=50&offset=${offset}`)
         .then(response =>{
             const tokenData = response.data.map((token)=>({
                 image_uri: token.image_uri,
@@ -36,7 +38,7 @@ const GeneralTokens = ()=>{
             setGeneralTokens(tokenData)
         })
         .catch(error=>console.error('Request Error', error))
-    }, []);
+    }, [currentPage]);
 
     return (
         <div className="mx-auto mt-8 max-w-7xl mb-16">
@@ -104,6 +106,22 @@ const GeneralTokens = ()=>{
               </div>
             ))}
           </div>
+          <div className="pagination-controls flex justify-center mt-4">
+          <button 
+            className="mr-4 p-2 text-white bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 rounded-lg"
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            disabled={currentPage === 0}
+          >
+            Previous
+          </button>
+          <button 
+            className="p-2 text-white bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 rounded-lg"
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            disabled={generalTokens.length < 50}
+          >
+            Next
+          </button>
+        </div>
         </div>
       );
 }
