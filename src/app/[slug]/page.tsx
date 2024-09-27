@@ -8,6 +8,7 @@ import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
 import Loading from '@/components/page/loading';
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import { BannerTop } from '@/components/HomeComponents/banner-top';
+import { FaCopy } from 'react-icons/fa6';
 
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
@@ -63,6 +64,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       <div className="w-full justify-center gap-10 mt-10 grid grid-cols-12">
         {/* Chart Column */}
         <div className="w-full h-full flex-grow col-span-9">
+          <div className="flex flex-row text-sm mb-2">
+
+            <h3 className='text-white'>Token: {token.name}</h3>
+
+            <h3 className='text-white ml-5'>Ticker: ${token.symbol}</h3>
+
+            <div className='flex flex-row'> <h3 className='text-white ml-5'>CA: {token.mint} </h3> <FaCopy className='pt-1 ml-1 text-primary' /></div>
+
+            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>$15.540</span></h3>
+           
+
+          </div>
           <LightweightChart tokenMint={token.mint} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
