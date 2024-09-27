@@ -1,7 +1,7 @@
 const config = {
 
     // Token Info
-    siteName: 'Pump.fun Alternative',
+    siteName: 'PumpScanner',
 
     // Social Media
     twitterUsername: 'username',

@@ -1,4 +1,4 @@
-import {Montserrat, Poppins, Lexend, Short_Stack} from 'next/font/google';
+import {Montserrat, Poppins, Lexend, Short_Stack, Catamaran} from 'next/font/google';
 
 export const fontMontserrat = Montserrat({
   subsets: ['latin'],
@@ -22,6 +22,14 @@ export const fontShortStack = Short_Stack({
   subsets: ['latin'],
   variable: '--font-short-stack',
 });
+
+
+export const fontCatamaran = Catamaran({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-catamaran',
+});
+
 
 // export const fontPrimary = Rubik({subsets: ['latin']});
 // export const lusitana = Lusitana({

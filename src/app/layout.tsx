@@ -1,5 +1,5 @@
 import './globals.css';
-import { fontLexend, fontMontserrat, fontShortStack } from '@/configs/fonts.configs';
+import { fontLexend, fontMontserrat, fontShortStack, fontCatamaran } from '@/configs/fonts.configs';
 import { cn } from '@/lib/utils';
 import { NavTop } from '@/page/nav-top';
 import { Footer } from '@/page/footer';
@@ -27,11 +27,15 @@ export default function RootLayout({
           fontMontserrat.variable,
           fontLexend.variable,
           fontShortStack.variable,
+          fontCatamaran.className,
+          fontCatamaran.variable,
         )}
       >
+
+      <div className="absolute inset-x-0 m-auto h-80 max-w-lg bg-gradient-to-tr from-indigo-400 via-teal-900 to-primary opacity-20 blur-[118px]"></div>
         <NavTop />
         <Providers>
-          <div className="min-h-[calc(100vh-155px)] doodle ">
+          <div className="min-h-[calc(100vh-155px)] ">
             <div className="min-h-[calc(100vh-195px)]">{children}</div>
             <Footer />
           </div>

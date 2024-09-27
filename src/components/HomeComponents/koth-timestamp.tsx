@@ -5,6 +5,7 @@ import axios from 'axios';
 import {Splide, SplideSlide} from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
+import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 
 interface Token {
   mint:string;
@@ -27,6 +28,9 @@ const KothTimestamp = () => {
             logo : token.logo,
             name: token.name,
             symbol: token.symbol,
+            twitter:token.twitter,
+            website:token.website,
+            telegram:token.telegram,
             address: token.address,
             mint:token.mint
           }))
@@ -38,56 +42,72 @@ const KothTimestamp = () => {
   return (
     <>
       <div className="mx-auto mt-8 max-w-7xl">
-        <h1 className="pb-10 font-extrabold text-3xl">Last King of the Hill</h1>
+      <h1
+          className="ml-6 text-2xl text-primary"
+          data-aos="fade-right"
+          data-aos-delay="100"
+          data-aos-duration="1500"
+        >
+          Last King of the Hill
+        </h1>
+ 
         <Splide
-          options={{ perPage: 6, gap: 26, navigator: false, pagination: false }}
+          options={{ perPage: 7, gap: 0, navigator: false, pagination: false }}
           aria-label="King of The Hill"
-          className="lg:flex"
+          className="wrapper hidden lg:flex justify-stretch"
           data-aos="zoom-in-up"
           data-aos-delay="100"
           data-aos-duration="1500"
         >
           {kothTokens.map(token => (
             <SplideSlide key={token.address}>
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col card">
                 <a href={`/${token.address}`}>
                   <img
                     src={token.logo}
                     alt={token.name}
-                    className="max-h-48 max-w-48 object-contain"
+                    className="flex h-34 w-34 w-full rounded-sm"
                   />
                 </a>
-                <h2 className="text-maincolor mt-2 font-poppins text-lg">
+                <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
                   {token.name}
                 </h2>
-                <p className="text-blackcolor text-sm">{token.symbol}</p>
+                <span className="text-base uppercase text-primary">
+                  {' '}
+                  ${token.symbol}
+                </span>
   
-                {/* Adicionando os ícones */}
-                <div className="flex mt-2 space-x-4">
-                  {token.website && (
-                    <a href={token.website} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                      <FaGlobe className="h-5 w-5" />
-                    </a>
-                  )}
+                 
+                <div className="mt-4 flex flex-row items-center gap-2">
                   {token.twitter && (
-                    <a href={token.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                      <FaTwitter className="h-5 w-5" />
+                    <a href={token.twitter} target="_blank" rel="nofollow">
+                      <TwitterLogoIcon className="h-5 w-5 hover:text-primary" />
                     </a>
                   )}
+
                   {token.telegram && (
-                    <a href={token.telegram} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                      <FaTelegramPlane className="h-5 w-5" />
-                    </a>
+                  <a href={token.telegram} target="_blank" rel="nofollow">
+                    <FaTelegramPlane className="h-5 w-5 hover:text-primary" />
+                  </a>
                   )}
-                  {/* Alterar ícone para Pump.fun */}
-                 <a
-                  href={`https://pump.fun/${token.mint}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500"
-                >
-                  <FaGlobe className="h-5 w-5" />
-                </a>
+
+                  {token.website && (
+                  <a href={token.website} target="_blank" rel="nofollow">
+                    <GlobeIcon className="h-5 w-5 hover:text-primary" />
+                  </a>
+                  )}
+
+                  <a
+                    href={`https://pump.fun/${token.address}`}
+                    target="_blank"
+                    rel="nofollow"
+                  >
+                    <img
+                      src="/logo-pumpfun.webp"
+                      alt="pumpfun"
+                      className="h-5 w-5 hover:opacity-70"
+                    />
+                  </a>
                 </div>
               </div>
             </SplideSlide>

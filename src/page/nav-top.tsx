@@ -16,14 +16,23 @@ export function NavTop() {
       <div className="flex w-full max-w-7xl justify-center">
         <div className="inline-flex h-24 w-full items-center justify-between p-2 px-6">
           <Link href="/" prefetch={false}>
-            <Image
+          <Image
               src="/logo.webp"
-              width={90}
+              width={180}
               height={90}
-              alt="OnePay"
+              alt="Pump.fun Alternative"
               className="mr-10"
             />
           </Link>
+
+
+          <ul className="flex flex-row mt-8 mb-4">
+          <a href="" className='mr-10'>About</a>
+          <a href="" className='mr-10'>Advertise</a>
+          <a href="" className='mr-10'>Support</a>
+          <a href="">Contact</a>
+        </ul>
+
 
           {/* <div className="flex justify-between gap-2">
             <Notifications />
