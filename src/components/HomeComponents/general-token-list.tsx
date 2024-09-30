@@ -22,7 +22,7 @@ interface Token {
     const [currentPage, setCurrentPage] = useState(0)
 
     useEffect(()=>{
-      const tokensPerPage = 49;
+      const tokensPerPage = 50;
       const offset = currentPage * tokensPerPage;
         axios.get<Token[]>(`/api/coins?offset=${offset}&limit=${50}&sort=created_timestamp&order=DESC&includeNsfw=false`)
         .then(response =>{
@@ -52,18 +52,18 @@ interface Token {
               Most Recent Tokens
             </h1>
         
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4"
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4"
                data-aos="zoom-in-up"
                data-aos-delay="100"
                data-aos-duration="1500"
           >
-            {generalTokens.slice(0, 49).map(token => (
+            {generalTokens.slice(0, 50).map(token => (
               <div key={token.mint} className="flex flex-col items-center">
                 <a href={`/${token.mint}`}>
                   <img
                     src={token.image_uri}
                     alt={token.name}
-                    className="h-32 w-32 object-cover rounded-sm"
+                    className="h-40 w-40 object-cover rounded-sm"
                   />
                 </a>
                 <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
