@@ -21,9 +21,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   useEffect(() => {
     async function fetchToken() {
       try {
-        const response = await axios.get(`/api/coins`, {
-          params: { tokenAddress: params.slug }
-        });
+        const response = await axios.get(`/api/coins/${params.slug}`);
         response.data.image_uri = unprotectLinkOfCFIPFS(response.data.image_uri);
         setToken(response.data);
       } catch (err) {

@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa"; 
+import { FaTelegramPlane } from "react-icons/fa"; 
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import './splide-customization.css'
 
