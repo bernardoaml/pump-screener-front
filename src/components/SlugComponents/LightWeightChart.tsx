@@ -4,14 +4,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CandlestickData, CandlestickSeriesOptions, createChart, IChartApi, ISeriesApi, Time, WhitespaceData } from 'lightweight-charts';
 import { CandleStick, fetchTokenData } from '@/services/tradingViewDataFeed';
+import axios from 'axios';
+import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 
 type CandleStickSeries = ISeriesApi<"Candlestick", Time, CandlestickData<Time> | WhitespaceData<Time>, CandlestickSeriesOptions>;
 type ChartState = { chart: IChartApi, series: CandleStickSeries };
 interface LightweightChartProps {
   tokenMint: string;
+  setBondingCurveData?: React.Dispatch<React.SetStateAction<BondingCurveResponse | null>>;
 }
 
-const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
+const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint, setBondingCurveData }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [chartState, setChartState] = useState<ChartState | null>(null);
   const [data, setData] = useState<CandleStick[] | null>(null);
@@ -70,23 +73,37 @@ const LightweightChart: React.FC<LightweightChartProps> = ({ tokenMint }) => {
   }, []);
 
   useEffect(() => {
-    if (chartState) {
+    if (chartState && makeRequest) {
+      setMakeRequest(false);
       fetchTokenData(tokenMint)
-        .then((candles) => setData(candles))
-        .catch((err) => console.error("Fail fetching token candles data", err))
-        .finally(() => {
-          setTimeout(() => {
-            setMakeRequest((prev) => !prev);
-          }, 1000);
+        .then((candles) => {
+          if (
+            !data
+            || data.length !== candles.length
+            || data.length && candles.length && data[data.length - 1].close !== candles[candles.length - 1].close
+          ) {
+            setData(candles);
+          }
         })
+        .catch((err) => console.error("Fail fetching token candles data", err))
+        .finally(() => setTimeout(() => setMakeRequest(true), 1000));
     }
-  }, [makeRequest, chartState, tokenMint]);
+  }, [data, makeRequest, chartState, tokenMint]);
 
   useEffect(() => {
     if (chartState && data) {
       chartState.series.setData(data as unknown as CandlestickData<Time>[]);
+      if (setBondingCurveData) {
+        if (!data.length) {
+          setBondingCurveData(null);
+        } else {
+          axios.get<BondingCurveResponse>("/api/bonding_curve", { headers: { mint: tokenMint } })
+            .then((res) =>  setBondingCurveData(res.data))
+            .catch((err) => console.log("Fail fetching bonding curve data", err));
+        }
+      }
     }
-  }, [data, chartState])
+  }, [data, chartState, tokenMint, setBondingCurveData])
 
   return <div ref={chartContainerRef} className='bg-gray-500 w-full max-w-[1600px] h-96 mb-4 m-auto' />
 };

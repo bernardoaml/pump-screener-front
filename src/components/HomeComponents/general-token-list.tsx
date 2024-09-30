@@ -24,8 +24,9 @@ interface Token {
     useEffect(()=>{
       const tokensPerPage = 49;
       const offset = currentPage * tokensPerPage;
-        axios.get<Token[]>(`/api/recent_tokens?limit=50&offset=${offset}`)
+        axios.get<Token[]>(`/api/coins?offset=${offset}&limit=${50}&sort=created_timestamp&order=DESC&includeNsfw=false`)
         .then(response =>{
+          console.log(response)
             const tokenData = response.data.map((token)=>({
                 image_uri: token.image_uri,
                 name: token.name,

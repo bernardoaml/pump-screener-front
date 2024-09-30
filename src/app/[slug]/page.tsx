@@ -4,15 +4,16 @@ import axios, { AxiosError } from 'axios';
 import ThreadTradesSection from '@/components/SlugComponents/ThreadsTradeSection';
 import LightweightChart from '@/components/SlugComponents/LightWeightChart';
 import unprotectLinkOfCFIPFS from '@/utils/unprotectLinkOfCFIPFS';
-import { FaGlobe, FaTwitter, FaTelegramPlane } from "react-icons/fa";
+import { FaTelegramPlane } from "react-icons/fa";
 import Loading from '@/components/page/loading';
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-import { BannerTop } from '@/components/HomeComponents/banner-top';
 import { FaCopy } from 'react-icons/fa6';
+import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [bondingCurveData, setBondingCurveData] = useState<BondingCurveResponse | null>(null);
 
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,11 +73,10 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
             <div className='flex flex-row'> <h3 className='text-white ml-5'>CA: {token.mint} </h3> <FaCopy className='pt-1 ml-1 text-primary' /></div>
 
-            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>$15.540</span></h3>
-           
+            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurveData?.marketCapUSD || 0).toLocaleString()}`}</span></h3>
 
           </div>
-          <LightweightChart tokenMint={token.mint} />
+          <LightweightChart tokenMint={token.mint} setBondingCurveData={setBondingCurveData} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
               [scroll down]
@@ -129,13 +129,13 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           <div className="w-full block pt-6">
             <h3 className='text-base pb-2'>Bonding Curve Progress:</h3>
             <div className="w-full h-5 bg-black bg-opacity-70 rounded-full">
-              <div className="w-3/4 h-full text-center text-sm text-secondary  font-semibold bg-primary rounded-full">
-                75%
+              <div className={`h-full text-center text-sm text-secondary  font-semibold bg-primary rounded-full`} style={{ width: `${ bondingCurveData?.percent || 0 }%`}}>
+                { bondingCurveData?.percent || 0 }%
               </div>
             </div>
-            <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>$64,271</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
+            <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`${Number(Math.round(bondingCurveData?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
 
-            <p className='text-sm pt-3'>there are 69,911,468 tokens still available for sale in the bonding curve and there is <span className='text-primary'>62.021</span> SOL in the bonding curve.</p>
+            <p className='text-sm pt-3'>there are {Number(Math.floor((bondingCurveData?.realTokenReserves || 0) / 10 ** 6)).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{Number((bondingCurveData?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
           </div>
         </div>
       </div>
