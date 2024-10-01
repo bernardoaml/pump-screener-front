@@ -20,9 +20,9 @@ interface Token {
 
 const RecentTokens = () => {
   const [recentTokens, setRecentTokens] = useState<Token[]>([]);
+  const [newTokenMint, setNewTokenMint] = useState<string | null>(null); // Armazena o mint do token recém-adicionado
 
   useEffect(() => {
-    // Função que faz a requisição à API
     const fetchTokens = () => {
       axios.get<Token[]>('/api/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=false')
         .then(response => {
@@ -35,20 +35,29 @@ const RecentTokens = () => {
             telegram: token.telegram,
             mint: token.mint,
           }));
+
+          // Verificar se há um token novo
+          if (recentTokens.length > 0) {
+            const newToken = tokenData.find(token => !recentTokens.some(t => t.mint === token.mint));
+            if (newToken) {
+              setNewTokenMint(newToken.mint); // Armazena o mint do token recém-adicionado
+            }
+          }
+
           setRecentTokens(tokenData);
+
+          // Remove o efeito após 1 segundo
+          setTimeout(() => setNewTokenMint(null), 1000);
         })
         .catch(error => console.error('Request Error', error));
     };
 
-    // Function Call for the first time
     fetchTokens();
 
-    // Refresh Interval
     const intervalId = setInterval(fetchTokens, 1000);
 
-    // Clear the interval when the component is built
     return () => clearInterval(intervalId);
-  }, []);
+  }, [recentTokens]);
 
   return (
     <div className="mx-auto mt-8 max-w-7xl">
@@ -69,9 +78,9 @@ const RecentTokens = () => {
         data-aos-delay="100"
         data-aos-duration="1500"
       >
-        {recentTokens.map(token => (
+        {recentTokens.map((token) => (
           <SplideSlide key={token.mint}>
-            <div className="flex flex-col card">
+            <div className={`flex flex-col card ${newTokenMint === token.mint ? 'blink-effect' : ''}`}>
               <a href={`/${token.mint}`}>
                 <img
                   src={token.image_uri}
