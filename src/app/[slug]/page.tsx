@@ -13,7 +13,8 @@ import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [bondingCurveData, setBondingCurveData] = useState<BondingCurveResponse | null>(null);
+  const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
+  const [getBondingCurve, setGetBondingCurve] = useState(true);
 
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -21,9 +22,9 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   useEffect(() => {
     async function fetchToken() {
       try {
-        const response = await axios.get(`/api/coins/${params.slug}`);
-        response.data.image_uri = unprotectLinkOfCFIPFS(response.data.image_uri);
-        setToken(response.data);
+        const { data } = await axios.get<TokenData>(`/api/coins/${params.slug}`);
+        data.image_uri = unprotectLinkOfCFIPFS(data.image_uri);
+        setToken(data);
       } catch (err) {
         if (err instanceof AxiosError || err instanceof Error) {
           setError(err.message);
@@ -36,6 +37,15 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
     fetchToken();
   }, [params.slug]);
+
+  useEffect(() => {
+    if (getBondingCurve) {
+      setGetBondingCurve(false);
+      axios.get<BondingCurveResponse>("/api/bonding_curve", { headers: { mint: params.slug } })
+        .then(({ data }) => setBondingCurve(data))
+        .catch((err) => console.error("Fail fetch bonding curve", err));
+    }
+  }, [params.slug, getBondingCurve]);
 
   const scrollToTop = () => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -71,10 +81,10 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
             <div className='flex flex-row'> <h3 className='text-white ml-5'>CA: {token.mint} </h3> <FaCopy className='pt-1 ml-1 text-primary' /></div>
 
-            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurveData?.marketCapUSD || 0).toLocaleString()}`}</span></h3>
+            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurve?.marketCapUSD || 0).toLocaleString()}`}</span></h3>
 
           </div>
-          <LightweightChart tokenMint={token.mint} setBondingCurveData={setBondingCurveData} />
+          <LightweightChart tokenMint={token.mint} onUpdate={setGetBondingCurve} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
               [scroll down]
@@ -85,7 +95,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
         {/* Token Info */}
         <div className="col-span-3 order-2 flex flex-col">
-          <img src={token.image_uri} alt={token.name} className="w-64 h-auto mb-4" />
+          <img src={token.image_uri || ""} alt={token.name} className="w-64 h-auto mb-4" />
 
           <h1 className="text-xl font-medium">{token.name}</h1>
           <h2 className='text-xl font-semibold text-primary'>${token.symbol}</h2>
@@ -127,13 +137,13 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           <div className="w-full block pt-6">
             <h3 className='text-base pb-2'>Bonding Curve Progress:</h3>
             <div className="w-full h-5 bg-black bg-opacity-70 rounded-full">
-              <div className={`h-full text-center text-sm text-secondary  font-semibold bg-primary rounded-full`} style={{ width: `${ bondingCurveData?.percent || 0 }%`}}>
-                { bondingCurveData?.percent || 0 }%
+              <div className={`h-full text-center text-sm text-secondary  font-semibold bg-primary rounded-full`} style={{ width: `${bondingCurve?.percent || 0}%`}}>
+                {`${bondingCurve?.percent || 0}%`}
               </div>
             </div>
-            <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`${Number(Math.round(bondingCurveData?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
+            <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`$${Number(Math.round(bondingCurve?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
 
-            <p className='text-sm pt-3'>there are {Number(Math.floor((bondingCurveData?.realTokenReserves || 0) / 10 ** 6)).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{Number((bondingCurveData?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
+            <p className='text-sm pt-3'>there are {Math.floor((bondingCurve?.realTokenReserves || 0) / 10 ** 6).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{((bondingCurve?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
           </div>
         </div>
       </div>
