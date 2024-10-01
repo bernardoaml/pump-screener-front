@@ -4,58 +4,70 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { FaTelegramPlane } from "react-icons/fa"; 
+import { FaTelegramPlane } from "react-icons/fa";
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-import './splide-customization.css'
+import './splide-customization.css';
 
 interface Token {
   image_uri?: string;
   name: string;
   symbol: string;
   mint: string;
-  website?:string;
-  twitter?:string;
-  telegram?:string;
+  website?: string;
+  twitter?: string;
+  telegram?: string;
 }
 
 const RecentTokens = () => {
   const [recentTokens, setRecentTokens] = useState<Token[]>([]);
 
   useEffect(() => {
-    axios.get<Token[]>('/api/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=false')
-      .then(response => {
-        const tokenData = response.data.map((token) => ({
-          image_uri: token.image_uri,
-          name: token.name,
-          symbol: token.symbol,
-          twitter:token.twitter,
-          website:token.website,
-          telegram:token.telegram,
-          mint: token.mint
-        }))
-        setRecentTokens(tokenData);
-      })
-      .catch(error => console.error('Request Error', error));
+    // Função que faz a requisição à API
+    const fetchTokens = () => {
+      axios.get<Token[]>('/api/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=false')
+        .then(response => {
+          const tokenData = response.data.map((token) => ({
+            image_uri: token.image_uri,
+            name: token.name,
+            symbol: token.symbol,
+            twitter: token.twitter,
+            website: token.website,
+            telegram: token.telegram,
+            mint: token.mint,
+          }));
+          setRecentTokens(tokenData);
+        })
+        .catch(error => console.error('Request Error', error));
+    };
+
+    // Function Call for the first time
+    fetchTokens();
+
+    // Refresh Interval
+    const intervalId = setInterval(fetchTokens, 1000);
+
+    // Clear the interval when the component is built
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <div className="mx-auto mt-8 max-w-7xl">
       <h1
-          className="ml-6 text-2xl text-primary"
-          data-aos="fade-right"
-          data-aos-delay="100"
-          data-aos-duration="1500"
-        >
-          Most Recent Tokens
-        </h1>
-   
+        className="ml-6 text-2xl text-primary"
+        data-aos="fade-right"
+        data-aos-delay="100"
+        data-aos-duration="1500"
+      >
+        Most Recent Tokens
+      </h1>
+
       <Splide
         options={{ perPage: 7, gap: 0, navigator: false, pagination: false }}
         aria-label="Recent Tokens"
         className="wrapper hidden lg:flex justify-stretch"
-          data-aos="zoom-in-up"
-          data-aos-delay="100"
-          data-aos-duration="1500"
+        data-aos="zoom-in-up"
+        data-aos-delay="100"
+        data-aos-duration="1500"
       >
         {recentTokens.map(token => (
           <SplideSlide key={token.mint}>
@@ -68,44 +80,44 @@ const RecentTokens = () => {
                 />
               </a>
               <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
-                  {token.name}
-                </h2>
-                <span className="text-base uppercase text-primary">
-                  {' '}
-                  ${token.symbol}
-                </span>
-  
-                <div className="mt-4 flex flex-row items-center gap-2">
-                  {token.twitter && (
-                    <a href={token.twitter} target="_blank" rel="nofollow">
-                      <TwitterLogoIcon className="h-5 w-5 hover:text-primary" />
-                    </a>
-                  )}
+                {token.name}
+              </h2>
+              <span className="text-base uppercase text-primary">
+                {' '}
+                ${token.symbol}
+              </span>
 
-                  {token.telegram && (
+              <div className="mt-4 flex flex-row items-center gap-2">
+                {token.twitter && (
+                  <a href={token.twitter} target="_blank" rel="nofollow">
+                    <TwitterLogoIcon className="h-5 w-5 hover:text-primary" />
+                  </a>
+                )}
+
+                {token.telegram && (
                   <a href={token.telegram} target="_blank" rel="nofollow">
                     <FaTelegramPlane className="h-5 w-5 hover:text-primary" />
                   </a>
-                  )}
+                )}
 
-                  {token.website && (
+                {token.website && (
                   <a href={token.website} target="_blank" rel="nofollow">
                     <GlobeIcon className="h-5 w-5 hover:text-primary" />
                   </a>
-                  )}
+                )}
 
-                  <a
-                    href={`https://pump.fun/${token.mint}`}
-                    target="_blank"
-                    rel="nofollow"
-                  >
-                    <img
-                      src="/logo-pumpfun.webp"
-                      alt="pumpfun"
-                      className="h-5 w-5 hover:opacity-70"
-                    />
-                  </a>
-                </div>
+                <a
+                  href={`https://pump.fun/${token.mint}`}
+                  target="_blank"
+                  rel="nofollow"
+                >
+                  <img
+                    src="/logo-pumpfun.webp"
+                    alt="pumpfun"
+                    className="h-5 w-5 hover:opacity-70"
+                  />
+                </a>
+              </div>
             </div>
           </SplideSlide>
         ))}
