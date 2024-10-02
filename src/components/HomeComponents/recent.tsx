@@ -7,6 +7,7 @@ import '@splidejs/react-splide/css';
 import { FaTelegramPlane } from "react-icons/fa";
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import './splide-customization.css';
+import Image from 'next/image';
 
 interface Token {
   image_uri?: string;
@@ -36,17 +37,16 @@ const RecentTokens = () => {
             mint: token.mint,
           }));
 
-          // Verificar se há um token novo
+          
           if (recentTokens.length > 0) {
             const newToken = tokenData.find(token => !recentTokens.some(t => t.mint === token.mint));
             if (newToken) {
-              setNewTokenMint(newToken.mint); // Armazena o mint do token recém-adicionado
-            }
+              setNewTokenMint(newToken.mint); 
+            } 
           }
 
           setRecentTokens(tokenData);
 
-          // Remove o efeito após 1 segundo
           setTimeout(() => setNewTokenMint(null), 1000);
         })
         .catch(error => console.error('Request Error', error));
@@ -82,8 +82,8 @@ const RecentTokens = () => {
           <SplideSlide key={token.mint}>
             <div className={`flex flex-col card ${newTokenMint === token.mint ? 'blink-effect' : ''}`}>
               <a href={`/${token.mint}`}>
-                <img
-                  src={token.image_uri}
+              <img
+                  src={token.image_uri || ''}
                   alt={token.name}
                   className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
                 />
