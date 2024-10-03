@@ -1,21 +1,15 @@
 // src/components/TradeSection.tsx
 import { useEffect, useState } from 'react';
 import TradeItem from './TradeItem';
-import axios from 'axios';
 
-const TradeSection: React.FC<{ tokenAddress: string, creator: string }> = ({ tokenAddress, creator }) => {
-  const [trades, setTrades] = useState<Trade[]>([]);
+const TradeSection: React.FC<{ creator: string, trades: Trade[] }> = ({ creator, trades }) => {
+  const [slicedTrades, setSlicedTrades] = useState<Trade[]>(trades);
   const [offset, setOffset] = useState(0);
   const limit = 100;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const tradesData = await axios.get(`/api/trades/all/${tokenAddress}?limit=${limit}&offset=${offset}&minimumSize=0`);
-      setTrades(tradesData.data);
-    };
-
-    fetchData();
-  }, [tokenAddress, offset]);
+    setSlicedTrades(trades.slice(offset, offset + limit));
+  }, [offset, trades]);
 
   const handleNextPage = () => {
     setOffset(offset + limit);
@@ -37,7 +31,7 @@ const TradeSection: React.FC<{ tokenAddress: string, creator: string }> = ({ tok
         <div>Date</div>
         <div>Transaction</div>
       </div>
-      {trades.map((trade, index) => (
+      {slicedTrades.map((trade, index) => (
         <TradeItem key={trade.signature + String(index)} trade={trade} creator={creator} />
       ))}
       <div className="pagination-controls flex justify-between mt-4">

@@ -10,11 +10,46 @@ import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import { FaCopy } from 'react-icons/fa6';
 import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 
+interface CreatedToken {
+  mint: string;
+  name: string;
+  symbol: string;
+  description: string;
+  image_uri: string;
+  metadata_uri: string;
+  twitter: string | null;
+  telegram: string | null;
+  bonding_curve: string;
+  associated_bonding_curve: string;
+  creator: string;
+  created_timestamp: number;
+  complete: boolean;
+  virtual_sol_reserves: number;
+  virtual_token_reserves: number;
+  total_supply: number;
+  website: string | null;
+  show_name: boolean;
+  last_trade_timestamp: number;
+  king_of_the_hill_timestamp: number | null;
+  market_cap: number;
+  reply_count: number;
+  last_reply: number;
+  nsfw: boolean;
+  market_id: number | null;
+  inverted: null;
+  is_currently_live: boolean;
+  username: string;
+  profile_image: string;
+  usd_market_cap: number;
+}
+
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
   const [getBondingCurve, setGetBondingCurve] = useState(true);
+  const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
+  const [trades, setTrades] = useState<Trade[]>([]);
 
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -46,6 +81,44 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
         .catch((err) => console.error("Fail fetch bonding curve", err));
     }
   }, [params.slug, getBondingCurve]);
+
+  useEffect(() => {
+    if (token) {
+      axios.get<CreatedToken[]>(`/api/coins/user-created-coins/${token.creator}?offset=0&limit=10&includeNsfw=false`)
+        .then(({ data }) => {
+          setCreatedTokens(data.toSorted((a, b) => b.created_timestamp - a.created_timestamp));
+        })
+        .catch((err) => {
+          console.error("Fetch created", err);
+        });
+    }
+  }, [params.slug, token]);
+
+  useEffect(() => {
+    const getTrades = async () => {
+      const limit = 200;
+      let offset = 0;
+      let keepFetching = true;
+      const allTrades: Trade[] = [];
+      while (keepFetching) {
+        await axios.get<Trade[]>(`/api/trades/all/${params.slug}?limit=${limit}&offset=${offset}&minimumSize=0`)
+          .then(({ data }) => {
+            if (data.length) {
+              allTrades.push(...data);
+              offset += limit;
+            } else {
+              keepFetching = false;
+            }
+          })
+          .catch((err) => {
+            console.error("Fetch trades error", err);
+          });
+      }
+      setTrades(allTrades);
+    }
+
+    getTrades();
+  }, [params.slug]);
 
   const scrollToTop = () => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,7 +163,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               [scroll down]
             </span>
           </div>
-          <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} />
+          <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} trades={trades} />
         </div>
 
         {/* Token Info */}
@@ -145,6 +218,22 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
             <p className='text-sm pt-3'>there are {Math.floor((bondingCurve?.realTokenReserves || 0) / 10 ** 6).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{((bondingCurve?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
           </div>
+          { createdTokens.length && (
+            <div className="w-full block pt-6">
+              <a target="_blank" rel="noopener noreferrer" href={`https://pump.fun/profile/${createdTokens[createdTokens.length - 1].creator}`}>
+                { `${createdTokens[createdTokens.length - 1].username || createdTokens[createdTokens.length - 1].creator.slice(0, 6)} (dev)` }
+              </a>
+              <ul>
+                { createdTokens.map((token) => (
+                  <li key={token.mint}>
+                    <a href={`/${token.mint}`}>
+                      { token.mint.slice(0, 6) }
+                    </a>
+                  </li>
+                )) }
+              </ul>
+            </div>
+          ) }
         </div>
       </div>
       <div className="flex w-full justify-center items-center mt-4">

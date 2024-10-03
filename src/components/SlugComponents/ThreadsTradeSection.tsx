@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CommentSection from './CommentSection';
 import TradeSection from './TradeSection';
 
-const ThreadTradesSection: React.FC<{ tokenAddress: string, creator: string }> = ({ tokenAddress, creator }) => {
+const ThreadTradesSection: React.FC<{ tokenAddress: string, creator: string, trades: Trade[] }> = ({ tokenAddress, creator, trades }) => {
   const [activeTab, setActiveTab] = useState<'thread' | 'trades'>('thread');
 
   return (
@@ -28,7 +28,7 @@ const ThreadTradesSection: React.FC<{ tokenAddress: string, creator: string }> =
         </div>
       ) : (
         <div className="bg-black bg-opacity-40 p-4 rounded-lg">
-          <TradeSection tokenAddress={tokenAddress} creator={creator} />
+          <TradeSection creator={creator} trades={trades} />
         </div>
       )}
     </div>
