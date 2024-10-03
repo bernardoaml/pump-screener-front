@@ -9,6 +9,7 @@ import Loading from '@/components/page/loading';
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import { FaCopy } from 'react-icons/fa6';
 import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
+import { delay } from '@/services/utils';
 
 interface CreatedToken {
   mint: string;
@@ -49,7 +50,8 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
   const [getBondingCurve, setGetBondingCurve] = useState(true);
   const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const [buyers, setBuyers] = useState<Set<string>>(new Set());
+  const [updateBuyers, setUpdateBuyers] = useState(false);
 
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -99,26 +101,52 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       const limit = 200;
       let offset = 0;
       let keepFetching = true;
-      const allTrades: Trade[] = [];
+      const waitIntervalMs = 1000;
+      const allBuyers = new Set<string>();
       while (keepFetching) {
         await axios.get<Trade[]>(`/api/trades/all/${params.slug}?limit=${limit}&offset=${offset}&minimumSize=0`)
           .then(({ data }) => {
             if (data.length) {
-              allTrades.push(...data);
+              data.forEach((trade) => {
+                allBuyers.add(trade.user);
+              });
               offset += limit;
             } else {
               keepFetching = false;
             }
           })
           .catch((err) => {
-            console.error("Fetch trades error", err);
+            console.error("Fetch trades buyers error", err);
           });
+        if (waitIntervalMs) await delay(waitIntervalMs);
       }
-      setTrades(allTrades);
+      setBuyers((prev) => allBuyers.union(prev));
+      setUpdateBuyers(true);
     }
 
     getTrades();
   }, [params.slug]);
+
+  useEffect(() => {
+    if (updateBuyers) {
+      const fetchRecentTrades = async () => {
+        try {
+          const { data } = await axios.get<Trade[]>(`/api/trades/all/${params.slug}?limit=50&offset=0&minimumSize=0`);
+          const buyersSet = new Set<string>();
+          for (let i = 0; i < data.length; ++i) {
+            buyersSet.add(data[i].user);
+          }
+          if (buyersSet.size) {
+            setBuyers((prev) => buyersSet.union(prev));
+          }
+        } catch (err) {
+          console.error("Fail fetching recent trades", err);
+        }
+      }
+      const interval = setInterval(fetchRecentTrades, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [params.slug, updateBuyers]);
 
   const scrollToTop = () => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -163,7 +191,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               [scroll down]
             </span>
           </div>
-          <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} trades={trades} />
+          <ThreadTradesSection tokenAddress={token.mint} creator={token.creator} />
         </div>
 
         {/* Token Info */}
@@ -232,17 +260,19 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               <p className="text-md text-white-600 mt-4">Other coins created by this developer:</p>
               
               <ul className="mt-2 space-y-2 border-t border-gray-200 pt-4 flex-col">
-                { createdTokens.map((token) => (
+                { createdTokens.filter((token) => token.mint != params.slug).map((token) => (
                   <li key={token.mint} className="text-gray-700">
                     <a href={`/${token.mint}`} className="no-underline hover:underline flex-row  hover:text-white transition-colors">
-                      { token.symbol }
-                      
+                      { token.name }
                     </a>
                   </li>
                 )) }
               </ul>
             </div>
-          )}
+          ) }
+          <div className="w-full block pt-6">
+            { buyers.size ? `Number of buyers: ${buyers.size}` : `Number of buyers: Loading...` }
+          </div>
         </div>
       </div>
       <div className="flex w-full justify-center items-center mt-4">
