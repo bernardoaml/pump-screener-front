@@ -19,6 +19,8 @@ interface Token {
   telegram?: string;
 }
 
+let interval: NodeJS.Timeout | null = null;
+
 const RecentTokens = () => {
   const [recentTokens, setRecentTokens] = useState<Token[]>([]);
   const [newTokenMint, setNewTokenMint] = useState<string | null>(null); // Armazena o mint do token recém-adicionado
@@ -37,26 +39,30 @@ const RecentTokens = () => {
             mint: token.mint,
           }));
 
-          
           if (recentTokens.length > 0) {
             const newToken = tokenData.find(token => !recentTokens.some(t => t.mint === token.mint));
             if (newToken) {
-              setNewTokenMint(newToken.mint); 
-            } 
+              setNewTokenMint(newToken.mint);
+              setRecentTokens(tokenData);
+              setTimeout(() => setNewTokenMint(null), 1000);
+            }
+          } else {
+            setRecentTokens(tokenData);
           }
-
-          setRecentTokens(tokenData);
-
-          setTimeout(() => setNewTokenMint(null), 1000);
         })
         .catch(error => console.error('Request Error', error));
     };
 
-    fetchTokens();
+    if (!interval) {
+      interval = setInterval(fetchTokens, 1000);
+    }
 
-    const intervalId = setInterval(fetchTokens, 1000);
-
-    return () => clearInterval(intervalId);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
   }, [recentTokens]);
 
   return (
@@ -82,15 +88,15 @@ const RecentTokens = () => {
           <SplideSlide key={token.mint}>
             <div className={`flex flex-col card ${newTokenMint === token.mint ? 'blink-effect' : ''}`}>
               <a href={`/${token.mint}`}>
-              <img
-                  src={token.image_uri || ''}
-                  alt={token.name}
-                  className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
-                />
+                <img
+                    src={token.image_uri || ''}
+                    alt={token.name}
+                    className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
+                  />
+                <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
+                  {token.name}
+                </h2>
               </a>
-              <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
-                {token.name}
-              </h2>
               <span className="text-base uppercase text-primary">
                 {' '}
                 ${token.symbol}
