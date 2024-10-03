@@ -1,4 +1,3 @@
-// src/components/TradeSection.tsx
 import { useEffect, useState } from 'react';
 import TradeItem from './TradeItem';
 
@@ -8,8 +7,21 @@ const TradeSection: React.FC<{ creator: string, trades: Trade[] }> = ({ creator,
   const limit = 100;
 
   useEffect(() => {
-    setSlicedTrades(trades.slice(offset, offset + limit));
-  }, [offset, trades]);
+    const fetchData = async () => {
+      try {
+        const tradesData = await axios.get(`/api/trades/all/${tokenAddress}?limit=${limit}&offset=${offset}&minimumSize=0`);
+        setTrades(tradesData.data);
+      } catch (error) {
+        console.error('Error fetching trades:', error);
+      }
+    };
+
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 5000); // Interval Time
+
+    return () => clearInterval(intervalId); // Clear Interval and build component
+  }, [tokenAddress, offset]);
 
   const handleNextPage = () => {
     setOffset(offset + limit);
