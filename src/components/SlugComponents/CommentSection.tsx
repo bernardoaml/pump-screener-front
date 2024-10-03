@@ -1,4 +1,3 @@
-// src/components/CommentSection.tsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CommentItem from './CommentItem';
@@ -9,14 +8,22 @@ const CommentSection: React.FC<{ tokenAddress: string, creator: string }> = ({ t
 
   useEffect(() => {
     const fetchData = async () => {
-      const commentsData = await axios.get(`/api/replies/${tokenAddress}`);
-      setComments(commentsData.data.map((comment: Comment) => ({
-        ...comment,
-        profile_image: unprotectLinkOfCFIPFS(comment.profile_image),
-      })));
+      try {
+        const commentsData = await axios.get(`/api/replies/${tokenAddress}`);
+        setComments(commentsData.data.map((comment: Comment) => ({
+          ...comment,
+          profile_image: unprotectLinkOfCFIPFS(comment.profile_image),
+        })));
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
     };
 
     fetchData();
+
+    const intervalId = setInterval(fetchData, 5000); // Refresh Time
+
+    return () => clearInterval(intervalId); // Clear Interval
   }, [tokenAddress]);
 
   return (
