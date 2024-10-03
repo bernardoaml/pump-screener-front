@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import TradeItem from './TradeItem';
+import axios from 'axios';
 
-const TradeSection: React.FC<{ creator: string, trades: Trade[] }> = ({ creator, trades }) => {
-  const [slicedTrades, setSlicedTrades] = useState<Trade[]>(trades);
+const TradeSection: React.FC<{ creator: string, tokenAddress: string }> = ({ creator, tokenAddress }) => {
+  const [trades, setTrades] = useState<Trade[]>([]);
   const [offset, setOffset] = useState(0);
   const limit = 100;
 
@@ -43,7 +44,7 @@ const TradeSection: React.FC<{ creator: string, trades: Trade[] }> = ({ creator,
         <div>Date</div>
         <div>Transaction</div>
       </div>
-      {slicedTrades.map((trade, index) => (
+      {trades.map((trade, index) => (
         <TradeItem key={trade.signature + String(index)} trade={trade} creator={creator} />
       ))}
       <div className="pagination-controls flex justify-between mt-4">
