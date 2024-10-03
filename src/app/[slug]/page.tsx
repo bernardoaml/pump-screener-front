@@ -220,20 +220,29 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           </div>
           { createdTokens.length && (
             <div className="w-full block pt-6">
-              <a target="_blank" rel="noopener noreferrer" href={`https://pump.fun/profile/${createdTokens[createdTokens.length - 1].creator}`}>
+              <a 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                href={`https://pump.fun/profile/${createdTokens[createdTokens.length - 1].creator}`}
+                className="text-lg font-semibold text-white hover:text-blue-800 transition-colors underline"
+              >
                 { `${createdTokens[createdTokens.length - 1].username || createdTokens[createdTokens.length - 1].creator.slice(0, 6)} (dev)` }
               </a>
-              <ul>
+              
+              <p className="text-md text-white-600 mt-4">Other coins created by this developer:</p>
+              
+              <ul className="mt-2 space-y-2 border-t border-gray-200 pt-4 flex-col">
                 { createdTokens.map((token) => (
-                  <li key={token.mint}>
-                    <a href={`/${token.mint}`}>
-                      { token.mint.slice(0, 6) }
+                  <li key={token.mint} className="text-gray-700">
+                    <a href={`/${token.mint}`} className="no-underline hover:underline flex-row  hover:text-white transition-colors">
+                      { token.symbol }
+                      
                     </a>
                   </li>
                 )) }
               </ul>
             </div>
-          ) }
+          )}
         </div>
       </div>
       <div className="flex w-full justify-center items-center mt-4">
