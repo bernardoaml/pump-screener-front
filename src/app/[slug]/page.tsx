@@ -4,10 +4,9 @@ import axios, { AxiosError } from 'axios';
 import ThreadTradesSection from '@/components/SlugComponents/ThreadsTradeSection';
 import LightweightChart from '@/components/SlugComponents/LightWeightChart';
 import unprotectLinkOfCFIPFS from '@/utils/unprotectLinkOfCFIPFS';
-import { FaTelegramPlane } from "react-icons/fa";
+import { FaTelegramPlane, FaRocket, FaFire, FaPoop, FaEye, FaCopy } from "react-icons/fa";
 import Loading from '@/components/page/loading';
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-import { FaCopy } from 'react-icons/fa6';
 import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 import { delay } from '@/services/utils';
 
@@ -52,6 +51,13 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
   const [buyers, setBuyers] = useState<Set<string>>(new Set());
   const [updateBuyers, setUpdateBuyers] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+  const [clickCounts, setClickCounts] = useState({
+    rocket: 0,
+    fire: 0,
+    poop: 0,
+    eye: 0,
+  });
 
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -156,6 +162,28 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleIconClick = (iconName: string) => {
+   
+    if (selectedIcon === iconName) {
+      setSelectedIcon(null);
+      setClickCounts(prevCounts => ({
+        ...prevCounts,
+        [iconName]: prevCounts[iconName] - 1,
+      }));
+    } else {
+      
+      setSelectedIcon(iconName);
+      setClickCounts(prevCounts => {
+        const newCounts = { ...prevCounts };
+        if (selectedIcon) {
+          newCounts[selectedIcon] -= 1; 
+        }
+        newCounts[iconName] += 1; 
+        return newCounts;
+      });
+    }
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -175,15 +203,10 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
         {/* Chart Column */}
         <div className="w-full h-full flex-grow col-span-9">
           <div className="flex flex-row text-sm mb-2">
-
             <h3 className='text-white'>Token: {token.name}</h3>
-
             <h3 className='text-white ml-5'>Ticker: ${token.symbol}</h3>
-
             <div className='flex flex-row'> <h3 className='text-white ml-5'>CA: {token.mint} </h3> <FaCopy className='pt-1 ml-1 text-primary' /></div>
-
             <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurve?.marketCapUSD || 0).toLocaleString()}`}</span></h3>
-
           </div>
           <LightweightChart tokenMint={token.mint} onUpdate={setGetBondingCurve} />
           <div ref={topRef} className="mb-4 flex justify-start">
@@ -197,10 +220,8 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
         {/* Token Info */}
         <div className="col-span-3 order-2 flex flex-col">
           <img src={token.image_uri || ""} alt={token.name} className="w-64 h-auto mb-4" />
-
           <h1 className="text-xl font-medium">{token.name}</h1>
           <h2 className='text-xl font-semibold text-primary'>${token.symbol}</h2>
-
           <p className="text-sm text mt-2">{token.description}</p>
 
           <div className="mt-4 flex flex-row items-center gap-2">
@@ -209,19 +230,16 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
                 <TwitterLogoIcon className="h-5 w-5 hover:text-primary" />
               </a>
             )}
-
             {token.telegram && (
               <a href={token.telegram} target="_blank" rel="nofollow">
                 <FaTelegramPlane className="h-5 w-5 hover:text-primary" />
               </a>
             )}
-
             {token.website && (
               <a href={token.website} target="_blank" rel="nofollow">
                 <GlobeIcon className="h-5 w-5 hover:text-primary" />
               </a>
             )}
-
             <a
               href={`https://pump.fun/${token.mint}`}
               target="_blank"
@@ -238,14 +256,14 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           <div className="w-full block pt-6">
             <h3 className='text-base pb-2'>Bonding Curve Progress:</h3>
             <div className="w-full h-5 bg-black bg-opacity-70 rounded-full">
-              <div className={`h-full text-center text-sm text-secondary  font-semibold bg-primary rounded-full`} style={{ width: `${bondingCurve?.percent || 0}%`}}>
+              <div className={`h-full text-center text-sm text-secondary font-semibold bg-primary rounded-full`} style={{ width: `${bondingCurve?.percent || 0}%`}}>
                 {`${bondingCurve?.percent || 0}%`}
               </div>
             </div>
             <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`$${Number(Math.round(bondingCurve?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
-
             <p className='text-sm pt-3'>there are {Math.floor((bondingCurve?.realTokenReserves || 0) / 10 ** 6).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{((bondingCurve?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
           </div>
+
           { createdTokens.length && (
             <div className="w-full block pt-6">
               <a 
@@ -256,28 +274,44 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               >
                 { `${createdTokens[createdTokens.length - 1].username || createdTokens[createdTokens.length - 1].creator.slice(0, 6)} (dev)` }
               </a>
-              
               <p className="text-md text-white-600 mt-4">Other coins created by this developer:</p>
-              
               <ul className="mt-2 space-y-2 border-t border-gray-200 pt-4 flex-col">
                 { createdTokens.filter((token) => token.mint != params.slug).map((token) => (
                   <li key={token.mint} className="text-gray-700">
-                    <a href={`/${token.mint}`} className="no-underline hover:underline flex-row  hover:text-white transition-colors">
+                    <a href={`/${token.mint}`} className="no-underline hover:underline flex-row hover:text-white transition-colors">
                       { token.name }
                     </a>
                   </li>
                 )) }
               </ul>
             </div>
-          ) }
+          )}
+
+          <div className="flex w-full justify-around items-center mt-4">
+            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('rocket')}>
+              <FaRocket size={24} className={selectedIcon === 'rocket' ? 'text-blue-500' : 'text-gray-500'} />
+              <span className="text-xs text-gray-700">{clickCounts.rocket}</span>
+            </div>
+            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('fire')}>
+              <FaFire size={24} className={selectedIcon === 'fire' ? 'text-red-500' : 'text-gray-500'} />
+              <span className="text-xs text-gray-700">{clickCounts.fire}</span>
+            </div>
+            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('poop')}>
+              <FaPoop size={24} className={selectedIcon === 'poop' ? 'text-yellow-500' : 'text-gray-500'} />
+              <span className="text-xs text-gray-700">{clickCounts.poop}</span>
+            </div>
+            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('eye')}>
+              <FaEye size={24} className={selectedIcon === 'eye' ? 'text-green-500' : 'text-gray-500'} />
+              <span className="text-xs text-gray-700">{clickCounts.eye}</span>
+            </div>
+          </div>
+
           <div className="w-full block pt-6">
             { buyers.size ? `Number of buyers: ${buyers.size}` : `Number of buyers: Loading...` }
           </div>
         </div>
       </div>
-      <div className="flex w-full justify-center items-center mt-4">
 
-      </div>
       <div ref={bottomRef} className="w-full flex justify-center mt-4">
         <span className="text-sm bg-transparent text-white cursor-pointer" onClick={scrollToTop}>
           [scroll up]
