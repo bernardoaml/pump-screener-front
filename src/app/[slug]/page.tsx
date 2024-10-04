@@ -43,6 +43,16 @@ interface CreatedToken {
   usd_market_cap: number;
 }
 
+interface LikeMap {
+  countMap: {
+    rocket: number;
+    fire: number;
+    poop: number;
+    eye: number;
+  };
+  lastUserIconInteraction: string | null;  
+}
+
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,11 +62,14 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const [buyers, setBuyers] = useState<Set<string>>(new Set());
   const [updateBuyers, setUpdateBuyers] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-  const [clickCounts, setClickCounts] = useState({
-    rocket: 0,
-    fire: 0,
-    poop: 0,
-    eye: 0,
+  const [clickCounts, setClickCounts] = useState<LikeMap>({
+    countMap: {
+      rocket: 0,
+      fire: 0,
+      poop: 0,
+      eye: 0,
+    },
+    lastUserIconInteraction: null,
   });
 
   const topRef = useRef<HTMLDivElement>(null);
@@ -154,6 +167,25 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
     }
   }, [params.slug, updateBuyers]);
 
+  useEffect(() => {
+    if (!localStorage.getItem("userLikeToken")) {
+      localStorage.setItem("userLikeToken", crypto.randomUUID().replace("-", ""));
+    }
+    const interval = setInterval(async () => {
+      axios.get<LikeMap>("/api/likes", { params: { mint: params.slug, userLikeToken: localStorage.getItem("userLikeToken") }})
+      .then(({ data }) => {
+        setClickCounts(data);
+        setSelectedIcon(data.lastUserIconInteraction);
+      })
+      .catch((err) => {
+        if (err instanceof AxiosError && err.status !== 404) {
+          console.error("Fail fetching likes", err);
+        }
+      })
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [params.slug]);
+
   const scrollToTop = () => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -163,25 +195,22 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   };
 
   const handleIconClick = (iconName: string) => {
-   
     if (selectedIcon === iconName) {
       setSelectedIcon(null);
-      setClickCounts(prevCounts => ({
-        ...prevCounts,
-        [iconName]: prevCounts[iconName] - 1,
-      }));
     } else {
-      
       setSelectedIcon(iconName);
-      setClickCounts(prevCounts => {
-        const newCounts = { ...prevCounts };
-        if (selectedIcon) {
-          newCounts[selectedIcon] -= 1; 
-        }
-        newCounts[iconName] += 1; 
-        return newCounts;
-      });
     }
+    axios.post<LikeMap>("/api/likes", {
+      tokenMint: params.slug,
+      userLikeToken: localStorage.getItem("userLikeToken"),
+      iconName,
+    })
+    .then(({ data }) => {
+      setClickCounts(data)
+    })
+    .catch((err) => {
+      console.error("Fail to handle icon click", err);
+    });
   };
 
   if (error) {
@@ -290,19 +319,19 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           <div className="flex w-full justify-around items-center mt-4">
             <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('rocket')}>
               <FaRocket size={24} className={selectedIcon === 'rocket' ? 'text-blue-500' : 'text-gray-500'} />
-              <span className="text-xs text-gray-700">{clickCounts.rocket}</span>
+              <span className="text-xs text-gray-700">{clickCounts.countMap.rocket}</span>
             </div>
             <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('fire')}>
               <FaFire size={24} className={selectedIcon === 'fire' ? 'text-red-500' : 'text-gray-500'} />
-              <span className="text-xs text-gray-700">{clickCounts.fire}</span>
+              <span className="text-xs text-gray-700">{clickCounts.countMap.fire}</span>
             </div>
             <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('poop')}>
               <FaPoop size={24} className={selectedIcon === 'poop' ? 'text-yellow-500' : 'text-gray-500'} />
-              <span className="text-xs text-gray-700">{clickCounts.poop}</span>
+              <span className="text-xs text-gray-700">{clickCounts.countMap.poop}</span>
             </div>
             <div className="flex flex-col items-center cursor-pointer" onClick={() => handleIconClick('eye')}>
               <FaEye size={24} className={selectedIcon === 'eye' ? 'text-green-500' : 'text-gray-500'} />
-              <span className="text-xs text-gray-700">{clickCounts.eye}</span>
+              <span className="text-xs text-gray-700">{clickCounts.countMap.eye}</span>
             </div>
           </div>
 
