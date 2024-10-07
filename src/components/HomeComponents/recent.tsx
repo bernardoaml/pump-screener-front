@@ -7,7 +7,7 @@ import '@splidejs/react-splide/css';
 import { FaTelegramPlane } from "react-icons/fa";
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import './splide-customization.css';
-import Image from 'next/image';
+import MarketCap from './market-cap';
 
 interface Token {
   image_uri?: string;
@@ -17,6 +17,7 @@ interface Token {
   website?: string;
   twitter?: string;
   telegram?: string;
+  usd_market_cap: number;
 }
 
 let interval: NodeJS.Timeout | null = null;
@@ -37,6 +38,7 @@ const RecentTokens = () => {
             website: token.website,
             telegram: token.telegram,
             mint: token.mint,
+            usd_market_cap: token.usd_market_cap,
           }));
 
           if (recentTokens.length > 0) {
@@ -86,7 +88,7 @@ const RecentTokens = () => {
       >
         {recentTokens.map((token) => (
           <SplideSlide key={token.mint}>
-            <div className={`flex flex-col card ${newTokenMint === token.mint ? 'blink-effect' : ''}`}>
+            <div className={`flex flex-col my-5 card ${newTokenMint === token.mint ? 'blink-effect' : ''}`}>
               <a href={`/${token.mint}`}>
                 <img
                     src={token.image_uri || ''}
@@ -101,6 +103,8 @@ const RecentTokens = () => {
                 {' '}
                 ${token.symbol}
               </span>
+
+              <MarketCap value={token.usd_market_cap} />
 
               <div className="mt-4 flex flex-row items-center gap-2">
                 {token.twitter && (

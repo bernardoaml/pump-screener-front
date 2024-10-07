@@ -11,7 +11,7 @@ export function Footer() {
         <Image
           className="relative mx-auto border-none"
           src="/logo.webp"
-          alt="PumpScreener"
+          alt="PumpScanner"
           width={150}
           height={150}
           priority

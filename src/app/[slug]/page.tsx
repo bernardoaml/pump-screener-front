@@ -298,16 +298,24 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               >
                 { `${createdTokens[createdTokens.length - 1].username || createdTokens[createdTokens.length - 1].creator.slice(0, 6)} (dev)` }
               </a>
-              <p className="text-md text-white-600 mt-4">Other coins created by this developer:</p>
-              <ul className="mt-2 space-y-2 border-t border-gray-200 pt-4 flex-col">
-                { createdTokens.filter((token) => token.mint != params.slug).map((token) => (
-                  <li key={token.mint} className="text-gray-700">
-                    <a href={`/${token.mint}`} className="no-underline hover:underline flex-row hover:text-white transition-colors">
-                      { token.name }
-                    </a>
-                  </li>
-                )) }
-              </ul>
+              {
+                createdTokens.length > 1 ? (
+                  <>
+                    <p className="text-md text-white-600 mt-4">Other coins created by this developer:</p>
+                    <ul className="mt-2 space-y-2 border-t border-gray-200 pt-4 flex-col">
+                      { createdTokens.filter((token) => token.mint != params.slug).map((token) => (
+                        <li key={token.mint} className="text-gray-700">
+                          <a href={`/${token.mint}`} className="no-underline hover:underline flex-row hover:text-white transition-colors">
+                            { token.name }
+                          </a>
+                        </li>
+                      )) }
+                    </ul>
+                  </>
+                ) : (
+                  <p className="text-md text-white-600 mt-4 border-b border-gray-200 pb-4">This is the first coin created by the developer.</p>
+                )
+              }
             </div>
           )}
 
@@ -331,7 +339,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           </div>
 
           <div className="w-full block pt-6">
-            { buyers.size ? `Number of buyers: ${buyers.size}` : `Number of buyers: Loading...` }
+            { buyers.size ? `Number of Holders: ${buyers.size}` : `Number of Holders: Loading...` }
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import '@splidejs/react-splide/css';
 import { FaTelegramPlane } from "react-icons/fa";
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import './splide-customization.css';
+import MarketCap from './market-cap';
 
 interface Token {
   image_uri?: string;
@@ -18,6 +19,7 @@ interface Token {
   website?: string;
   twitter?: string;
   telegram?: string;
+  usd_market_cap: number;
 }
 
 const MoreCloseToRaydium = () => {
@@ -36,6 +38,7 @@ const MoreCloseToRaydium = () => {
             website: token.website,
             telegram: token.telegram,
             mint: token.mint,
+            usd_market_cap: token.usd_market_cap,
           }));
           setRaydiumTokens(tokenData);
         })
@@ -54,7 +57,7 @@ const MoreCloseToRaydium = () => {
 
   return (
     <>
-      <div className="mx-auto mt-8 max-w-7xl">
+      <div className="mx-auto max-w-7xl">
         <h1
           className="ml-6 text-2xl text-primary"
           data-aos="fade-right"
@@ -74,7 +77,7 @@ const MoreCloseToRaydium = () => {
         >
           {raydiumTokens.map(token => (
             <SplideSlide key={token.address}>
-              <div className="flex flex-col card">
+              <div className="flex flex-col card my-5">
                 <a href={`/${token.address}`}>
                   <img
                     src={token.logo}
@@ -89,6 +92,8 @@ const MoreCloseToRaydium = () => {
                   {' '}
                   ${token.symbol}
                 </span>
+
+                <MarketCap value={token.usd_market_cap} />
 
                 <div className="mt-4 flex flex-row items-center gap-2">
                   {token.twitter && (

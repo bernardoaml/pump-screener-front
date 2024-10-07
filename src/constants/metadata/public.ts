@@ -3,12 +3,12 @@ import type {Metadata} from 'next';
 
 
 /* Prefix */
-const P = 'PumpScreener';
+const P = 'PumpScanner';
 
 export const rootMetadata: Metadata = {
   title: `${P}`,
   description:
-    'Welcome to PumpScreener',
+    'Welcome to PumpScanner',
   bookmarks: `${baseURL}`,
 };
 

@@ -6,6 +6,7 @@ import '@splidejs/react-splide/css';
 import { FaTelegramPlane } from "react-icons/fa"; 
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import './splide-customization.css'
+import MarketCap from './market-cap';
 
 interface Token {
   image_uri?: string;
@@ -15,6 +16,7 @@ interface Token {
   website?:string;
   twitter?:string;
   telegram?:string;
+  usd_market_cap: number;
 }
 
 const GeneralTokens = () => {
@@ -33,7 +35,8 @@ const GeneralTokens = () => {
               twitter:token.twitter,
               website:token.website,
               telegram:token.telegram,
-              mint: token.mint
+              mint: token.mint,
+              usd_market_cap: token.usd_market_cap,
           }))
           setGeneralTokens(tokenData)
       })
@@ -41,7 +44,7 @@ const GeneralTokens = () => {
   }, [currentPage]);
 
   return (
-      <div className="mx-auto mt-8 max-w-7xl mb-16">
+      <div className="mx-auto max-w-7xl mb-16">
         <h1
             className="ml-6 text-2xl text-primary"
             data-aos="fade-right"
@@ -51,13 +54,13 @@ const GeneralTokens = () => {
             Most Recent Tokens
           </h1>
       
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4"
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 wrapper"
               data-aos="zoom-in-up"
               data-aos-delay="100"
               data-aos-duration="1500"
         >
           {generalTokens.slice(0, 50).map(token => (
-            <div key={token.mint} className="flex flex-col items-center">
+            <div key={token.mint} className="flex flex-col card items-center">
               <a href={`/${token.mint}`}>
                 <img
                   src={token.image_uri}
@@ -71,6 +74,8 @@ const GeneralTokens = () => {
               <span className="text-base uppercase text-primary">
                   ${token.symbol}
               </span>
+
+              <MarketCap value={token.usd_market_cap} />
     
               <div className="mt-4 flex flex-row items-center gap-2">
                 {token.twitter && (
