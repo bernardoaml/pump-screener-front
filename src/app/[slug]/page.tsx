@@ -56,6 +56,7 @@ interface LikeMap {
 export default function TokenPage({ params }: { params: { slug: string } }): JSX.Element {
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [dexBannerSrc, setDexBannerSrc] = useState("");
   const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
   const [getBondingCurve, setGetBondingCurve] = useState(false);
   const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
@@ -73,6 +74,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
+
+    async function getDexBanner() {
+      try {
+        const { data } = await axios.get<{ src: string }>("/api/dex_banner", { params: { mint: params.slug } })
+        if (data.src) {
+          setDexBannerSrc(data.src);
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
     async function fetchToken() {
       try {
         const { data } = await axios.get<TokenData>(`/api/coins/${params.slug}`);
@@ -89,6 +102,8 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       }
     }
 
+    getDexBanner()
+
     fetchToken()
       .then((data) => {
         if (data) {
@@ -100,6 +115,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           setGetCreatedTokens(true);
         }
       });
+
     return () => clearInterval(interval);
   }, [params.slug]);
 
@@ -319,6 +335,16 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               </>
             )}
           </div>
+
+          {!!dexBannerSrc && (
+            <div className="w-full">
+              <img
+                src={dexBannerSrc}
+                alt="dex banner"
+                className="w-64 h-auto mb-3 mt-8"
+              />
+            </div>
+          )}
 
           { createdTokens.length && (
             <div className="w-full block pt-6">
