@@ -3,6 +3,7 @@ const nextConfig = {
   env: {
     BASE_URL: process.env.BASE_URL,
     API_URL: process.env.API_URL,
+    USER_LIKE_TOKEN_ID: "_psut_"
   },
   async rewrites() {
     return [

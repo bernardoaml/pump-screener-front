@@ -57,8 +57,9 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
-  const [getBondingCurve, setGetBondingCurve] = useState(true);
+  const [getBondingCurve, setGetBondingCurve] = useState(false);
   const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
+  const [getCreatedTokens, setGetCreatedTokens] = useState(false);
   const [buyers, setBuyers] = useState<Set<string>>(new Set());
   const [updateBuyers, setUpdateBuyers] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
@@ -71,11 +72,13 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
     async function fetchToken() {
       try {
         const { data } = await axios.get<TokenData>(`/api/coins/${params.slug}`);
         data.image_uri = unprotectLinkOfCFIPFS(data.image_uri);
         setToken(data);
+        return data;
       } catch (err) {
         if (err instanceof AxiosError || err instanceof Error) {
           setError(err.message);
@@ -86,7 +89,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       }
     }
 
-    fetchToken();
+    fetchToken()
+      .then((data) => {
+        if (data) {
+          if (data.complete) {
+            interval = setInterval(fetchToken, 5000);
+          } else {
+            setGetBondingCurve(true);
+          }
+          setGetCreatedTokens(true);
+        }
+      });
+    return () => clearInterval(interval);
   }, [params.slug]);
 
   useEffect(() => {
@@ -99,7 +113,8 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   }, [params.slug, getBondingCurve]);
 
   useEffect(() => {
-    if (token) {
+    if (token && getCreatedTokens) {
+      setGetCreatedTokens(false);
       axios.get<CreatedToken[]>(`/api/coins/user-created-coins/${token.creator}?offset=0&limit=10&includeNsfw=false`)
         .then(({ data }) => {
           setCreatedTokens(data.toSorted((a, b) => b.created_timestamp - a.created_timestamp));
@@ -108,7 +123,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           console.error("Fetch created", err);
         });
     }
-  }, [params.slug, token]);
+  }, [getCreatedTokens, params.slug, token]);
 
   useEffect(() => {
     const getTrades = async () => {
@@ -163,11 +178,11 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   }, [params.slug, updateBuyers]);
 
   useEffect(() => {
-    if (!localStorage.getItem("userLikeToken")) {
-      localStorage.setItem("userLikeToken", crypto.randomUUID().replace("-", ""));
+    if (!localStorage.getItem(process.env.USER_LIKE_TOKEN_ID as string)) {
+      localStorage.setItem(process.env.USER_LIKE_TOKEN_ID as string, crypto.randomUUID());
     }
     const getLikes = async () => {
-      axios.get<LikeMap>("/api/likes", { params: { mint: params.slug, userLikeToken: localStorage.getItem("userLikeToken") }})
+      axios.get<LikeMap>("/api/likes", { params: { mint: params.slug, userLikeToken: localStorage.getItem(process.env.USER_LIKE_TOKEN_ID as string) }})
       .then(({ data }) => {
         if (data.countMap) {
           setClickCounts(data);
@@ -197,7 +212,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
     }
     axios.post<LikeMap>("/api/likes", {
       tokenMint: params.slug,
-      userLikeToken: localStorage.getItem("userLikeToken"),
+      userLikeToken: localStorage.getItem(process.env.USER_LIKE_TOKEN_ID as string),
       iconName,
     })
     .then(({ data }) => {
@@ -230,9 +245,9 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
             <h3 className='text-white'>Token: {token.name}</h3>
             <h3 className='text-white ml-5'>Ticker: ${token.symbol}</h3>
             <div className='flex flex-row'> <h3 className='text-white ml-5'>CA: {token.mint} </h3> <FaCopy className='pt-1 ml-1 text-primary' /></div>
-            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurve?.marketCapUSD || 0).toLocaleString()}`}</span></h3>
+            <h3 className='text-white ml-5'>Market Cap: <span className='text-primary'>{`$${Number(bondingCurve?.marketCapUSD || token.usd_market_cap).toLocaleString()}`}</span></h3>
           </div>
-          <LightweightChart tokenMint={token.mint} onUpdate={setGetBondingCurve} />
+          <LightweightChart tokenMint={token.mint} onUpdate={token.complete ? undefined : setGetBondingCurve} />
           <div ref={topRef} className="mb-4 flex justify-start">
             <span className="text-sm bg-transparent text-white mb-2 cursor-pointer" onClick={scrollToBottom}>
               [scroll down]
@@ -275,17 +290,34 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
                 className="h-5 w-5 hover:opacity-70"
               />
             </a>
+            {!!token.complete && !!token.raydium_pool && (
+              <a
+                href={`https://geckoterminal.com/solana/pools/${token.raydium_pool}`}
+                target="_blank"
+                rel="nofollow"
+              >
+                <img
+                  src="/raydium.png"
+                  alt="Raydium"
+                  className="h-5 w-5 hover:opacity-70"
+                />
+              </a>              
+            )}
           </div>
 
           <div className="w-full block pt-6">
             <h3 className='text-base pb-2'>Bonding Curve Progress:</h3>
             <div className="w-full h-5 bg-black bg-opacity-70 rounded-full">
-              <div className={`h-full text-center text-sm text-secondary font-semibold bg-primary rounded-full`} style={{ width: `${bondingCurve?.percent || 0}%`}}>
-                {`${bondingCurve?.percent || 0}%`}
+              <div className={`h-full text-center text-sm text-secondary font-semibold bg-primary rounded-full`} style={{ width: `${token.complete ? 100 : bondingCurve?.percent || 0}%`}}>
+                {`${token.complete ? 100 : bondingCurve?.percent || 0}%`}
               </div>
             </div>
-            <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`$${Number(Math.round(bondingCurve?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
-            <p className='text-sm pt-3'>there are {Math.floor((bondingCurve?.realTokenReserves || 0) / 10 ** 6).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{((bondingCurve?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
+            {bondingCurve && (
+              <>
+                <p className='text-sm pt-5'>When the market cap reaches <span className='text-primary'>{`$${Number(Math.round(bondingCurve?.finalMarketCapUSD || 0)).toLocaleString()}`}</span> all the liquidity from the bonding curve will be deposited into Raydium and burned. progression increases as the price goes up.</p>
+                <p className='text-sm pt-3'>there are {Math.floor((bondingCurve?.realTokenReserves || 0) / 10 ** 6).toLocaleString()} tokens still available for sale in the bonding curve and there is <span className='text-primary'>{((bondingCurve?.realSolReserves || 0) / 10 ** 9).toLocaleString()}</span> SOL in the bonding curve.</p>
+              </>
+            )}
           </div>
 
           { createdTokens.length && (
