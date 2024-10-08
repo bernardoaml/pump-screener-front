@@ -322,11 +322,15 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           </div>
 
           <div className="w-full block pt-6">
-            <h3 className='text-base pb-2'>Bonding Curve Progress:</h3>
-            <div className="w-full h-5 bg-black bg-opacity-70 rounded-full">
-              <div className={`h-full text-center text-sm text-secondary font-semibold bg-primary rounded-full`} style={{ width: `${token.complete ? 100 : bondingCurve?.percent || 0}%`}}>
-                {`${token.complete ? 100 : bondingCurve?.percent || 0}%`}
-              </div>
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-base">Bonding Curve Progress:</h3>
+              <span className="text-md text-left text-gray-400">{`${token.complete ? 100 : bondingCurve?.percent || 0}%`}</span>
+            </div>
+            <div className="w-full h-4 bg-gray-800 rounded-full">
+              <div 
+                className="h-full bg-green-400 rounded-full transition-all duration-500 ease-in-out" 
+                style={{ width: `${token.complete ? 100 : bondingCurve?.percent || 0}%` }}
+              ></div>
             </div>
             {bondingCurve && (
               <>
