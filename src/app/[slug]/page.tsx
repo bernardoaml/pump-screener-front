@@ -9,6 +9,9 @@ import Loading from '@/components/page/loading';
 import { GlobeIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 import { BondingCurveResponse } from '../../../pages/api/bonding_curve';
 import { delay } from '@/services/utils';
+import { DexTokensResponse } from '../../../pages/api/dex_tokens';
+import { HiSpeakerphone } from 'react-icons/hi';
+import { AiFillThunderbolt } from 'react-icons/ai';
 
 interface CreatedToken {
   mint: string;
@@ -57,6 +60,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
   const [token, setToken] = useState<TokenData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dexBannerSrc, setDexBannerSrc] = useState("");
+  const [dexBoosts, setDexBoosts] = useState(0);
   const [bondingCurve, setBondingCurve] = useState<BondingCurveResponse | null>(null);
   const [getBondingCurve, setGetBondingCurve] = useState(false);
   const [createdTokens, setCreatedTokens] = useState<CreatedToken[]>([]);
@@ -86,6 +90,18 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       }
     }
 
+    async function getDexBoosts() {
+      try {
+        const { data } = await axios.get<DexTokensResponse>("/api/dex_tokens", { params: { mint: params.slug } });
+        const pair = data.pairs.find(({ chainId, dexId }) => chainId === "solana" && dexId === "raydium");
+        if (pair?.boosts.active) {
+          setDexBoosts(pair.boosts.active);
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
     async function fetchToken() {
       try {
         const { data } = await axios.get<TokenData>(`/api/coins/${params.slug}`);
@@ -102,8 +118,8 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
       }
     }
 
-    getDexBanner()
-
+    getDexBanner();
+    getDexBoosts();
     fetchToken()
       .then((data) => {
         if (data) {
@@ -115,7 +131,6 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
           setGetCreatedTokens(true);
         }
       });
-
     return () => clearInterval(interval);
   }, [params.slug]);
 
@@ -339,8 +354,35 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
               </>
             )}
           </div>
-
-          {!!dexBannerSrc && (
+          {
+            !!dexBannerSrc || !!dexBoosts ? (
+              <div className="mb-3 mt-8">
+                <div className="flex flex-row gap-2 items-center">
+                  <img
+                    src="/dex_icon.png"
+                    alt="dexscreener_icon"
+                    width={24}
+                    height={24}
+                  />
+                  <HiSpeakerphone color={dexBannerSrc ? "green" : "red"} />
+                  <div className="flex flex-row items-center">
+                    <AiFillThunderbolt color="yellow" />
+                    <span className="">{dexBoosts}</span>
+                  </div>
+                </div>
+                {dexBannerSrc && (
+                  <div className="w-full">
+                    <img
+                      src={dexBannerSrc}
+                      alt="dex banner"
+                      className="w-64 h-auto mt-2"
+                    />
+                  </div>
+                )}
+              </div>
+            ) : null
+          }
+          {/* {!!dexBannerSrc && (
             <div className="w-full">
               <img
                 src={dexBannerSrc}
@@ -348,7 +390,7 @@ export default function TokenPage({ params }: { params: { slug: string } }): JSX
                 className="w-64 h-auto mb-3 mt-8"
               />
             </div>
-          )}
+          )} */}
 
           { createdTokens.length && (
             <div className="w-full block pt-6">
