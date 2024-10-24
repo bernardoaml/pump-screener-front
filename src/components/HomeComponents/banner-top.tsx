@@ -25,11 +25,11 @@ export const BannerTop = () => {
   }, [banners.length]);
 
   return (
-    <div className='max-w-7xl w-full h-auto mx-auto'>
+    <div className='max-w-7xl w-full h-auto mx-auto mt-3'>
       <img
         src={banners[currentBanner]}
         alt={`banner-${currentBanner}`}
-        className='rounded-lg'
+        className='rounded-xl'
         data-aos="zoom-in"
         data-aos-delay="100"
         data-aos-duration="1000"

@@ -44,9 +44,9 @@ const GeneralTokens = () => {
   }, [currentPage]);
 
   return (
-      <div className="mx-auto max-w-7xl mb-16">
+      <div className="mx-auto max-w-7xl mb-16 mt-3.5">
         <h1
-            className="ml-6 text-2xl text-primary"
+            className="ml-3 text-3xl text-primary"
             data-aos="fade-right"
             data-aos-delay="100"
             data-aos-duration="1500"
@@ -54,21 +54,21 @@ const GeneralTokens = () => {
             Most Recent Tokens
           </h1>
       
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 wrapper"
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-3.5 wrapper"
               data-aos="zoom-in-up"
               data-aos-delay="100"
               data-aos-duration="1500"
         >
           {generalTokens.slice(0, 50).map(token => (
-            <div key={token.mint} className="flex flex-col card items-center">
+            <div key={token.mint} className="flex flex-col card">
               <a href={`/${token.mint}`}>
                 <img
                   src={token.image_uri}
                   alt={token.name}
-                  className="h-40 w-40 object-cover rounded-sm"
+                  className="h-56 w-56 object-cover rounded-lg"
                 />
               </a>
-              <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
+              <h2 className="text-maincolor mt-3 line-clamp-1 text-lg">
                   {token.name}
                 </h2>
               <span className="text-base uppercase text-primary">
@@ -113,14 +113,14 @@ const GeneralTokens = () => {
         </div>
         <div className="pagination-controls flex justify-center mt-4">
         <button 
-          className="mr-4 p-2 text-white bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 rounded-lg"
+          className="mr-4 px-8 py-3 text-primary bg-white bg-opacity-5 hover:bg-primary hover:text-secondary disabled:bg-gray-50 disabled:bg-opacity-10 disabled:text-teal-100 disabled:opacity-30  rounded-md transition-colors duration-500"
           onClick={() => setCurrentPage(prev => prev - 1)}
           disabled={currentPage === 0}
         >
           Previous
         </button>
         <button 
-          className="p-2 text-white bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 rounded-lg"
+          className="px-8 py-3 text-primary bg-white bg-opacity-5 hover:bg-primary hover:text-secondary disabled:bg-gray-50 disabled:bg-opacity-10 disabled:text-teal-100 disabled:opacity-30  rounded-md transition-colors duration-500"
           onClick={() => setCurrentPage(prev => prev + 1)}
           disabled={generalTokens.length < 50}
         >

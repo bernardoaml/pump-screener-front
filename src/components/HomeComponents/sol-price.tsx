@@ -26,8 +26,10 @@ const SolPrice: React.FC = () => {
   }, []);
 
   return (
-    <div className="text-xl font-semibold">
-      {solPrice !== null ? `Sol Price: $${solPrice.toLocaleString()}` : 'Loading Sol Price...'}
+    <div className="text-sm font-medium font-sans flex items-center">
+      <img src='/solana-symbol.png' className='h-4 w-3.5 mr-2' />
+      
+      {solPrice !== null ? `$${solPrice.toLocaleString()}` : 'Loading Sol Price...'}
     </div>
   );
 };

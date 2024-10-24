@@ -57,9 +57,9 @@ const KothTimestamp = () => {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto mt-3.5 max-w-7xl">
         <h1
-          className="ml-6 text-2xl text-primary"
+          className="ml-3 text-3xl text-primary"
           data-aos="fade-right"
           data-aos-delay="100"
           data-aos-duration="1500"
@@ -82,7 +82,7 @@ const KothTimestamp = () => {
                   <img
                     src={token.logo}
                     alt={token.name}
-                    className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
+                    className="flex max-w-32 max-h-32 rounded-md min-h-32 min-w-32 object-cover"
                   />
                 </a>
                 <h2 className="text-maincolor mt-3 line-clamp-1 text-base">

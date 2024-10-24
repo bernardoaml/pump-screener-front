@@ -68,9 +68,9 @@ const RecentTokens = () => {
   }, [recentTokens]);
 
   return (
-    <div className="mx-auto mt-8 max-w-7xl">
+    <div className="mx-auto mt-9 max-w-7xl">
       <h1
-        className="ml-6 text-2xl text-primary"
+        className="ml-3 text-3xl text-primary"
         data-aos="fade-right"
         data-aos-delay="100"
         data-aos-duration="1500"
@@ -79,7 +79,7 @@ const RecentTokens = () => {
       </h1>
 
       <Splide
-        options={{ perPage: 7, gap: 0, navigator: false, pagination: false }}
+        options={{ perPage: 7, gap: 0, navigator: false, pagination: false, pauseOnHover: true }}
         aria-label="Recent Tokens"
         className="wrapper hidden lg:flex justify-stretch"
         data-aos="zoom-in-up"
@@ -93,13 +93,13 @@ const RecentTokens = () => {
                 <img
                     src={token.image_uri || ''}
                     alt={token.name}
-                    className="flex max-w-32 max-h-32 rounded-sm min-h-32 min-w-32 object-cover"
+                    className="flex max-w-36 max-h-36 rounded-md min-h-36 min-w-36 object-cover"
                   />
-                <h2 className="text-maincolor mt-3 line-clamp-1 text-base">
+                <h2 className="text-maincolor mt-3 line-clamp-1 text-md">
                   {token.name}
                 </h2>
               </a>
-              <span className="text-base uppercase text-primary">
+              <span className="text-md font-medium uppercase text-primary">
                 {' '}
                 ${token.symbol}
               </span>
